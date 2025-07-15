@@ -19,5 +19,7 @@ RUN dotnet publish "./webapi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish ./api
-COPY ["DBSetup/Config/appsettings.json", "/app/"] .
+#COPY ["./Database/Config/appsettings.json", "/app/"] .
+RUN cp api/appsettings.json /app/appsettings.json
 ENTRYPOINT ["dotnet", "api/webapi.dll"]
+#ENTRYPOINT ["/bin/bash"]

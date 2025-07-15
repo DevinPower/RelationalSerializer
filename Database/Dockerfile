@@ -1,7 +1,11 @@
 FROM mcr.microsoft.com/mssql/server:2022-latest
-RUN mkdir -p /tmp/setup
-WORKDIR /tmp/setup
 
-COPY /ContainerSetup /tmp/setup
+USER root
+
+RUN mkdir -p /etc/rsconfig/
+WORKDIR /etc/rsconfig/
+
+COPY ContainerSetup /etc/rsconfig/
+RUN ls -l /etc/rsconfig/
 
 ENTRYPOINT ["./entrypoint.sh"]
