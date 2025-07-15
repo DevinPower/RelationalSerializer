@@ -9,11 +9,11 @@ if ("" -eq $InstanceName -or $null -eq $InstanceName){
     $InstanceName = Read-Host "Instance Name"
 }
 
-if ("" -eq $DBPassword -or $null -eq $DBPassword){
-    $DBPassword = Read-Host "Database (SA) Password"
-}
+$CurrentDatabase = (docker inspect --type=image mcr.microsoft.com/mssql/server:2022-latest --format=json | ConvertFrom-JSON)
 
-docker pull mcr.microsoft.com/mssql/server:2022-latest
+if ($CurrentDatabase.count -eq 0){
+	docker pull mcr.microsoft.com/mssql/server:2022-latest
+}
 
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=$DBPassword" `
    -p "$($Port):1433" --name $InstanceName --hostname $InstanceName `
@@ -29,13 +29,9 @@ while ($true){
 	Start-Sleep 10
 }
 
-Start-Sleep 10
-
-Get-ChildItem ./DBSetup/SQL | ForEach{
-    Write-Host "Executing" $_.Name
-    $Content = (Get-Content $_ -Raw).Replace("\n", "`\n")
-
-    docker exec -it $InstanceName /opt/mssql-tools/bin/sqlcmd `
-        -S localhost -U SA -P "$DBPASSWORD" `
-        -Q $Content
+$AllContent = ""
+ForEach($Script in Get-ChildItem ./DBSetup/SQL){
+    Write-Host "Executing" $Script.Name
+    $AllContent += (Get-Content $Script -Raw).Replace("\n", "`\n") + '`n'
 }
+#mssql-docker/linux/preview/examples/mssql-customize/setup.sql

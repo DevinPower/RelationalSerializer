@@ -14,13 +14,10 @@ builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "MyPolicy",
+    options.AddPolicy(name: "LocalCors",
                 builder =>
                 {
-                    builder.WithOrigins(
-                        "https://localhost:5002/")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                    builder.SetIsOriginAllowed(origin => new Uri(origin).IsLoopback);
                 });
 });
 
@@ -34,7 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("MyPolicy");
+app.UseCors("LocalCors");
 
 webapi.Bootup.Run(builder.Configuration);
 
