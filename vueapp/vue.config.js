@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
         ...(httpsConfig && { https: httpsConfig }),
         proxy: {
             '^/api': {
-                target: 'http://localhost:5162/',
+                target: 'http://localhost:8080/',
                 pathRewrite: { '^/api': '' },
                 changeOrigin: true
             }
