@@ -6,6 +6,7 @@ RUN mkdir -p /etc/rsconfig/
 WORKDIR /etc/rsconfig/
 
 COPY ContainerSetup /etc/rsconfig/
-RUN ls -l /etc/rsconfig/
+RUN chmod +x /etc/rsconfig/entrypoint.sh
+RUN chmod +x /etc/rsconfig/configure-db.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/etc/rsconfig/entrypoint.sh"]

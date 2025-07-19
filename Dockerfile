@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -19,7 +18,6 @@ RUN dotnet publish "./webapi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish ./api
-#COPY ["./Database/Config/appsettings.json", "/app/"] .
+
 RUN cp api/appsettings.json /app/appsettings.json
 ENTRYPOINT ["dotnet", "api/webapi.dll"]
-#ENTRYPOINT ["/bin/bash"]
