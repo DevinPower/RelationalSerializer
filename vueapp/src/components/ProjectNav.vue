@@ -1,24 +1,53 @@
 <template>
-    <div class="post">
-        <h2 style="padding-left:20px;">Projects</h2>
-        <div v-if="post" class="content scrollView" style="padding-left:20px">
-            <div v-for="(project, index) in post" :key="index" style="margin-top: 4px; white-space: nowrap; width:100%;">
-                <a @click="changeProject(index)" class="navEntry" style="cursor:pointer;">{{ project.name }}</a>
-            </div>
-
-        </div>
-    </div>
+  <nav class="flex flex-1 flex-col" aria-label="Sidebar">
+    <ul role="list" class="flex flex-1 flex-col gap-y-7">
+      <li>
+        <ul role="list" class="-mx-2 space-y-1">
+          <li v-for="item in navigation" :key="item.name">
+            <a :href="item.href" :class="[item.current ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+              <component :is="item.icon" :class="[item.current ? 'text-indigo-600' : 'text-gray-400 group-hover:text-indigo-600', 'size-6 shrink-0']" aria-hidden="true" />
+              {{ item.name }}
+              <span v-if="item.count" class="ml-auto w-9 min-w-max rounded-full bg-white px-2.5 py-0.5 text-center text-xs/5 font-medium whitespace-nowrap text-gray-600 ring-1 ring-gray-200 ring-inset" aria-hidden="true">{{ item.count }}</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <div class="text-xs/6 font-semibold text-gray-400">Projects</div>
+        <ul role="list" class="-mx-2 mt-2 space-y-1">
+          <li v-for="item in secondaryNavigation" :key="item.name">
+            <a :href="item.href" :class="[item.current ? 'bg-gray-50 text-indigo-600' : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+              <span :class="[item.current ? 'border-indigo-600 text-indigo-600' : 'border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600', 'flex size-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium']">{{ item.name[0] }}</span>
+              <span class="truncate">{{ item.name }}</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
 </template>
 
-<script lang="js">
-    import { defineComponent } from 'vue';
+<script>
+import { defineComponent } from 'vue';
+import {
+  HomeIcon,
+  CodeBracketSquareIcon,
+  DocumentTextIcon,
+  PlusIcon
+} from '@heroicons/vue/24/outline'
 
     export default defineComponent({
         emits: ['update:project'],
         data() {
             return {
                 loading: false,
-                post: null
+                navigation : [
+                  { name: 'Dashboard', href: '#', icon: HomeIcon, count: '0', current: true },
+                  { name: 'Import', href: '#', icon: CodeBracketSquareIcon, count: '0', current: false },
+                  { name: 'Templates', href: '#', icon: DocumentTextIcon, count: '0', current: false }
+                ],
+                secondaryNavigation: [
+                ]
             };
         },
         created() {
@@ -41,7 +70,7 @@
                 fetch('/api/project' )
                     .then(r => r.json())
                     .then(json => {
-                        this.post = json;
+                        this.secondaryNavigation = json;
                         this.loading = false;
                         return;
                     });
@@ -49,55 +78,3 @@
         },
     });
 </script>
-
-<style>
-    .scrollView {
-        height: 100vh;
-        overflow-y:auto;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #f0f0f0;
-    }
-
-    .navEntry {
-        display: inline-block;
-        width:100%;
-    }
-
-        .navEntry:hover {
-            background-color: #818181;
-            color: #333333;
-        }
-
-    .compose-button {
-        background-color: #27ae60;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-        .compose-button i {
-            margin-right: 8px;
-        }
-
-        /* Click animation */
-        .compose-button:active {
-            transform: scale(0.95);
-        }
-
-        .compose-button:hover {
-            background-color: #218c53;
-        }
-</style>

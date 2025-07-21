@@ -1,12 +1,15 @@
 <template>
-    <label class="toggle-switch">
-        <input type="checkbox" :value="modelValue"
+    <div class="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full outline-offset-2 outline-indigo-600 has-focus-visible:outline-2 dark:outline-indigo-500">
+        <span class="absolute mx-auto h-4 w-9 rounded-full bg-gray-200 inset-ring inset-ring-gray-900/5 transition-colors duration-200 ease-in-out group-has-checked:bg-indigo-600 dark:bg-gray-800/50 dark:inset-ring-white/10 dark:group-has-checked:bg-indigo-500" />
+        <span class="absolute left-0 size-5 rounded-full border border-gray-300 bg-white shadow-xs transition-transform duration-200 ease-in-out group-has-checked:translate-x-5 dark:shadow-none" />
+        <input type="checkbox" class="absolute inset-0 appearance-none focus:outline-hidden" 
+        aria-label="Use setting" name="setting" 
+        :value="modelValue"
                @change="check($event)" 
                true-value="true"
                false-value="false"
                :checked="modelValue==true" />
-        <span class="slider round"></span>
-    </label>
+    </div>
 </template>
 
 <script lang="js">
@@ -36,64 +39,3 @@
         },
     });
 </script>
-
-<style>
-    .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-    }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-    input:checked + .slider {
-        background-color: #2196F3;
-    }
-
-    input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
-    }
-
-    input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-    }
-
-    .slider.round {
-        border-radius: 34px;
-    }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-</style>

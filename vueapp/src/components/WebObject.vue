@@ -1,5 +1,5 @@
 <template>
-    <div class="post">
+<!--     <div class="post">
         <div v-if="post" class="content">
             <h3 v-if="project && !isInline">{{ this.project }}/{{ this.id }}/{{objectName}}</h3>
 
@@ -29,16 +29,63 @@
                     </tr>
                 </tbody>
             </table>
-            <!--<textarea type="text" readonly style="width:100%;height:100px;">
-        {{JSON.stringify(this.post, null, 4)}}
-    </textarea>-->
         </div>
-    </div>
+    </div> -->
+
+        <div v-if="post" class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+          <div v-for="field in post.properties" :key="field" class="sm:col-span-4">
+            <label :for="field.name" class="block text-sm/6 font-medium text-gray-900">{{ field.name }}</label>
+
+            <div v-if="!field.isArray" class="mt-2">
+
+            <component :is="field.renderComponent" v-model="field.value"
+                :additionalData="field.additionalData"
+                @update:model-value="updateField(project, id, field.name, field.value)" 
+                :selfName="field.name" />
+
+            </div>
+
+            <div v-else class="mt-2">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div class="w-full border-t border-gray-300" />
+                    </div>
+                    <div class="relative flex items-center justify-between">
+                        <span class="bg-white pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
+                        <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                            <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
+                            <span>+</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div v-for="(column, index) in field.value" :key="index">
+                    <button class="compose-button red" style="width:48px;float:right;" @click="removeFromArray(field.name, index)">-</button>
+
+                    <component :is="field.renderComponent" v-model="field.value[index]"
+                                :additionalData="field.additionalData"
+                                @update:model-value="updateField(project, id, field.name + '[' + index + ']', field.value[index])"
+                                style="margin-bottom:4px; width:calc(90% - 96px);margin-left:96px;" 
+                                :selfName="field.name + '[' + index + ']'"/>
+                </div>
+
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-300" />
+                </div>
+
+            </div>
+
+          </div>
+
+        </div>
 </template>
 
 <script lang="js">
     import { defineComponent, computed } from 'vue';
     import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+    import {  PlusIcon
+        } from '@heroicons/vue/24/outline';
 
     import FC_Default from './FieldComponents/FC_Default.vue'
     import FC_RichText from './FieldComponents/FC_RichText.vue'
@@ -83,7 +130,8 @@
             FC_Number,
             FC_Choice,
             FC_Slider,
-            FC_InlineReference
+            FC_InlineReference,
+            PlusIcon
         },
         created() {  
             connection.on('updatefieldfromother', (fieldname, value) => {

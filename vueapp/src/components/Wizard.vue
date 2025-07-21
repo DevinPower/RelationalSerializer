@@ -1,8 +1,11 @@
 <template>
     <div class="post" v-if="!post">
-        <input type="file" id="newClass" name="filename" @change="AddFile" style="width:80%;">
-        <FC_Code v-model="fileContent" style="width:80%;" additionalData="{language: 'xml'}"></FC_Code>
-        <button @click="SendFile(this.fileContent)">Let's go!</button>
+        <reference-modal Header="Import" 
+        Prompt="Select source files from below to include them as a project."
+        :-options="[{'guid' : 'test', 'name': 'test1'},
+            {'guid' : 'meg', 'name': 'src/data/cards.cs'}
+        ]"
+        -hide-cancel="true"></reference-modal>
     </div>
     <div v-else>
         {{this.post}}
@@ -11,7 +14,7 @@
 
 <script lang="js">
     import { defineComponent } from 'vue';
-    import FC_Code from './FieldComponents/FC_Code.vue'
+    import ReferenceModal from './ReferenceModal.vue'
 
     export default defineComponent({
         data() {
@@ -21,7 +24,7 @@
             };
         },
         components: {
-            FC_Code
+            ReferenceModal
         },
         created() {
         },

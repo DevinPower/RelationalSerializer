@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
 import fs from 'fs'
 import path from 'path'
 
@@ -13,7 +14,10 @@ const certFilePath = path.join(baseFolder, `${certificateName}.pem`)
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`)
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    tailwindcss(),
+    vue()
+  ],
   server: {
     https: {
       key: fs.readFileSync(keyFilePath),

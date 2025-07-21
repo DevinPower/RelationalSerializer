@@ -1,32 +1,43 @@
-﻿<template>
-    <p>need a new library for code editor</p>
-    <!--<CodeEditor @input="$emit('update:modelValue', $event.target.value)"
-                :value="modelValue"
-
-                :languages="[[additionalData.language, additionalData.language]]"
-                style="width:100%"
-                :theme="additionalData.codeEditorTheme" />-->
-
+﻿
+<template>
+  <CodeMirror
+    v-model="codeValue"
+    :extensions="[luaLang]"
+    :dark="true"
+    basic
+  />
 </template>
 
 <script lang="js">
     import { defineComponent } from 'vue';
+    import {StreamLanguage} from "@codemirror/language"
+    import {lua} from "@codemirror/legacy-modes/mode/lua"
+    import CodeMirror from 'vue-codemirror6';
+
+    const luaLang = StreamLanguage.define(lua);
 
     export default defineComponent({
-        props: ['modelValue', 'additionalData', 'selfName'],
-          emits :['update:modelValue'],
-        data() {
-            return {
-            };
+      props: ['modelValue', 'additionalData', 'selfName'],
+      emits: ['update:modelValue'],
+      components: {
+        CodeMirror
+      },
+      data() {
+        return {
+          luaLang,
+          codeValue: this.modelValue
+        };
+      },
+      watch: {
+        modelValue(newVal) {
+          if (newVal !== this.codeValue) {
+            this.codeValue = newVal;
+          }
         },
-        components: {
-        },
-        created() {
-        },
-        watch: {
-        },
-        methods: {
-        },
+        codeValue(newVal) {
+          this.$emit('update:modelValue', newVal);
+        }
+      }
     });
 </script>
 
