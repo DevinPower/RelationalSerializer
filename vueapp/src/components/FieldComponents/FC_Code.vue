@@ -1,16 +1,16 @@
 ﻿<template>
-    <CodeEditor @input="$emit('update:modelValue', $event.target.value)"
+    <p>need a new library for code editor</p>
+    <!--<CodeEditor @input="$emit('update:modelValue', $event.target.value)"
                 :value="modelValue"
 
                 :languages="[[additionalData.language, additionalData.language]]"
                 style="width:100%"
-                :theme="additionalData.codeEditorTheme" />
+                :theme="additionalData.codeEditorTheme" />-->
 
 </template>
 
 <script lang="js">
     import { defineComponent } from 'vue';
-    import CodeEditor from 'simple-code-editor';
 
     export default defineComponent({
         props: ['modelValue', 'additionalData', 'selfName'],
@@ -20,7 +20,6 @@
             };
         },
         components: {
-            CodeEditor
         },
         created() {
         },
