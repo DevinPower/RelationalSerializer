@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./Database
+      dockerfile: Dockerfile
+    container_name: relational_db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - db_data:/var/opt/mssql
+    restart: unless-stopped
+
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: relational_webapi
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=Server=db;Initial Catalog=RelationalSerializer;User=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+    ports:
+      - "8080:80"
+      - "8443:443"
+    restart: unless-stopped
+
+
+  vueapp:
+    build:
+      context: ./vueapp
+      dockerfile: Dockerfile
+    container_name: relational_vueapp
+    depends_on:
+      - webapi
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  db_data:
