@@ -1,15 +1,15 @@
 <template>
-    <div class="post">
+    <div class="post" style="width:250px; padding:16px;">
 
-        <div class="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
+        <div class="flex flex-1 w-full justify-center px-2">
             <div class="grid w-full grid-cols-1">
                 <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block w-full rounded-md bg-gray-700 py-1.5 pr-3 pl-10 text-base text-white outline-hidden placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 sm:text-sm/6" 
                 placeholder="Search" v-model="searchText" />
                 <MagnifyingGlassIcon class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400" aria-hidden="true" />
             </div>
         </div>
-
-        <div class="relative" style="width:500px">
+        <div style="height:16px;" />
+        <div class="relative">
             <div class="absolute inset-0 flex items-center" aria-hidden="true">
                 <div class="w-full border-t border-gray-300" />
             </div>

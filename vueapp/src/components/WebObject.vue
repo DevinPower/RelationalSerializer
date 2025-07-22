@@ -32,7 +32,7 @@
         </div>
     </div> -->
 
-        <div v-if="post" class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div v-if="post" class="p-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 bg-gray-100">
 
           <div v-for="field in post.properties" :key="field" class="sm:col-span-4">
             <label :for="field.name" class="block text-sm/6 font-medium text-gray-900">{{ field.name }}</label>
@@ -192,13 +192,3 @@
         },
     });
 </script>
-
-<style>
-    .red {
-        background-color: #e74c3c;
-    }
-
-        .red:hover {
-            background-color: #c0392b;
-        }
-</style>
