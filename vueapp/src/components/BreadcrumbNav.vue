@@ -27,11 +27,9 @@
         } from '@heroicons/vue/24/outline';
 
     export default defineComponent({
-        props: [],
+        props: ['pages'],
         data() {
             return{
-                pages:[  { name: 'Projects', href: '#', current: false },
-  { name: 'Project Nero', href: '#', current: true }]
             }
         },
         created() {
