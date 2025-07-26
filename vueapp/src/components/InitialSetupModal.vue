@@ -37,6 +37,7 @@
     import AlertBox from './AlertBox.vue'
     import SetupInfo from './SetupComponents/SetupInfo.vue';
     import SetupAPI from './SetupComponents/SetupAPI.vue';
+import SetupRepo from './SetupComponents/SetupRepo.vue';
 
     export default defineComponent({
         props: ['open'],
@@ -52,14 +53,14 @@
                     }},
                     {name: 'Repository', current: false, backCallback: () => {} }
                 ],
-                pageComponents: ['SetupInfo', 'SetupAPI'],
+                pageComponents: ['SetupInfo', 'SetupAPI', 'SetupRepo'],
                 alertText: null
             };
         },
         components: {
             Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot,
             CheckIcon,
-            BreadcrumbNav, AlertBox, SetupInfo, SetupAPI
+            BreadcrumbNav, AlertBox, SetupInfo, SetupAPI, SetupRepo
         },
         created() {
         },

@@ -59,7 +59,7 @@ namespace webapi.Model.Modifiers
         public override void OnRender(RenderField field)
         {
             field.RenderComponent = "FC_Code";
-            field.AdditionalData = new { Language = SyntaxLanguage, CodeEditorTheme = InstanceSettings.Singleton.CodeEditorTheme };
+            field.AdditionalData = new { Language = SyntaxLanguage };
         }
     }
 
