@@ -16,7 +16,8 @@
                 <AlertBox v-if="alertText" :text="alertText"/>
                 <component :is="pageComponents[currentPage]" 
                     :continueCallback="nextPage"
-                    :cancelCallback="cancel"
+                    :errorCallback="setError"
+                    :backCallback="setupPages[currentPage].backCallback"
                     />
 
 
@@ -35,6 +36,7 @@
     import BreadcrumbNav from './BreadcrumbNav.vue';
     import AlertBox from './AlertBox.vue'
     import SetupInfo from './SetupComponents/SetupInfo.vue';
+    import SetupAPI from './SetupComponents/SetupAPI.vue';
 
     export default defineComponent({
         props: ['open'],
@@ -43,18 +45,21 @@
             return {
                 currentPage: 0,
                 setupPages:[
-                    {name: 'API Key', current: true},
-                    {name: 'Repo', current: false},
-                    {name: 'Finish', curent: false}
+                    {name: 'Info', current: true, backCallback: () => {} },
+                    {name: 'API Key', current: false, backCallback: () => {
+                      this.alertText = "";
+                      this.currentPage--;
+                    }},
+                    {name: 'Repository', current: false, backCallback: () => {} }
                 ],
-                pageComponents: ['SetupInfo'],
+                pageComponents: ['SetupInfo', 'SetupAPI'],
                 alertText: null
             };
         },
         components: {
             Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot,
             CheckIcon,
-            BreadcrumbNav, AlertBox, SetupInfo
+            BreadcrumbNav, AlertBox, SetupInfo, SetupAPI
         },
         created() {
         },
@@ -62,12 +67,13 @@
         },
         methods: {
             nextPage(){
-                this.pages[this.currentPage].current = false;
+                this.alertText = "";
+                this.setupPages[this.currentPage].current = false;
                 this.currentPage++;
-                this.pages[this.currentPage].current = true;
+                this.setupPages[this.currentPage].current = true;
             },
-            cancel(){
-
+            setError(text){
+              this.alertText = text;
             }
         },
     });

@@ -23,7 +23,7 @@
     import { defineComponent } from 'vue';
 
     export default defineComponent({
-        props: ['continueCallback', 'errorCallback'],
+        props: ['continueCallback', 'errorCallback', 'backCallback'],
         emits :[],
         data() {
             return {
