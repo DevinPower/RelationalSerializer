@@ -2,10 +2,14 @@
     <InitialSetupModal :open="showSetupModal" @close="showSetupModal = false" />
 
     <div v-if="loaded" class="flex min-h-screen w-full">
+
         <ProjectNav @update:project="swapProject" />
-        <ObjectNav :project="project" />
+        <div style="width:250px; padding:16px;">
+          <ObjectNav :project="project" />
+        </div>
+
+
         <main class="flex-5 flex flex-col min-h-screen">
-            <BreadcrumbNav />
             <div class="router-view-container grow flex flex-col">
                 <router-view class="router-view-content grow" />
             </div>

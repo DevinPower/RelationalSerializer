@@ -8,7 +8,6 @@
                 </div>
                 
                 <div>
-
                     <div class="flex flex-1 w-full px-2">
                         <div class="grid w-full grid-cols-1">
                             <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block w-full rounded-md bg-gray-700 py-1.5 pr-3 pl-10 text-base text-white outline-hidden placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 sm:text-sm/6" placeholder="Search" />
@@ -19,7 +18,7 @@
                     <nav class="flex flex-1 flex-col" aria-label="Sidebar">
                         <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in Options" :key="item.guid">
-                            <a :href="item.href" :class="['text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 pl-3 text-sm/6 font-semibold']">{{ item.name }}</a>
+                            <a @click="$emit('confirm', item.guid)" href="#" :class="['text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 pl-3 text-sm/6 font-semibold']">{{ item.name }}</a>
                         </li>
                         </ul>
                     </nav>

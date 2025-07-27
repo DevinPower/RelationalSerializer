@@ -112,7 +112,8 @@ public class ProjectController : ControllerBase
     [HttpPost, Route("/project/ALL/reimport")]
     public IActionResult ReimportAll()
     {
-        foreach (var project in DBProjects.GetProjects())
+        foreach (var project in DBProjects.GetProjects()
+                     .Where(project => project.Name[0] != '!' ))
             ImportProject(DBProjects.GetSourceByName(project.Name));
 
         return Ok();
