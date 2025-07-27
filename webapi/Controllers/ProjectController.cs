@@ -87,16 +87,16 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut, Route("/project/import")]
-    public IActionResult ImportProject(string url)
+    public IActionResult ImportProject([FromBody]string Path)
     {
         ImportSource source = new GithubSource();
 
         source.Authenticate();
-        IActionResult returnedValue = CreateProject(source.GetData(url));
+        IActionResult returnedValue = CreateProject(source.GetData(Path));
 
         List<string> newProjects = ((OkObjectResult)returnedValue).Value as List<string>;
         foreach(string project in newProjects)
-            DBProjects.InsertSource(project, "Github", url);
+            DBProjects.InsertSource(project, "Github", Path);
 
         return returnedValue;
     }

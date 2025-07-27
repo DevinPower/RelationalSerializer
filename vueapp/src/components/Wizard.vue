@@ -1,43 +1,55 @@
 <template>
     <div class="post" v-if="!post">
-        <reference-modal Header="Import" 
-        Prompt="Select source files from below to include them as a project."
-        :-options="directory"
-        -hide-cancel="true"></reference-modal>
-    </div>
-    <div v-else>
-        {{this.post}}
+        <RepoBrowser Header="Import" 
+            Prompt="Select source files from below to include them as a project."
+            :directory="directory"
+            @cd="selectFolder"
+            @updir="upDir"
+            @select="selectFile"></RepoBrowser>
     </div>
 
-    <ImportedClassesTable></ImportedClassesTable>
+    <ImportedClassesTable v-if="importedClasses"
+        :importedClasses="importedClasses"/>
 </template>
 
 <script lang="js">
     import { defineComponent } from 'vue';
-    import ReferenceModal from './ReferenceModal.vue'
     import ImportedClassesTable from './ImportedClassesTable.vue';
+    import RepoBrowser from './RepoBrowser.vue';
 
     export default defineComponent({
         data() {
             return {
                 directory: [],
-                cd: '/'
+                cd: '/',
+                importedClasses: null
             };
         },
         components: {
-            ReferenceModal, ImportedClassesTable
+            RepoBrowser, ImportedClassesTable
         },
         created() {
-            this.GetPath();
+            this.getPath();
+            this.getExistingClasses();
         },
         watch: {
         },
         methods: {
             selectFolder(appendValue){
                 this.cd += '/' + appendValue;
-                this.GetPath();
+                this.getPath();
             },
-            GetPath(){
+            upDir(){
+                if (this.cd === '/' || this.cd === '') return;
+                // Remove trailing slash if present (except root)
+                let path = this.cd.replace(/\/$/, '');
+                // Remove last segment
+                path = path.substring(0, path.lastIndexOf('/'));
+                // Ensure at least '/'
+                this.cd = path === '' ? '/' : path;
+                this.getPath();
+            },
+            getPath(){
                 fetch(`/api/project/importable?Path=${this.cd}` )
                     .then(r => r.json())
                     .then(json => {
@@ -46,22 +58,20 @@
                         return;
                     });
             },
-            //TODO: Kill both these functions, import file from backend directly from GH
-            AddFile(event){
-                const reader = new FileReader();
-                reader.onload = (res) => {
-                  this.fileContent = res.target.result;
-                };
-
-                reader.readAsText(event.target.files[0]);
+            selectFile(filepath){
+                fetch('/api/project/import', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.cd + '/' + filepath)
+                    });
             },
-            SendFile(fileContents) { 
-                fetch('/api/project/create',{
-                    method: "PUT",
-                    body: JSON.stringify(fileContents),
-                    headers: { "Content-Type": "application/json" }
-                }).then((response) => response.text())
-                    .then((x) => this.post = x);
+            getExistingClasses(){
+            fetch('/api/project' )
+                .then(r => r.json())
+                .then(json => {
+                    this.importedClasses = json;
+                    return;
+                });
             }
         },
     });

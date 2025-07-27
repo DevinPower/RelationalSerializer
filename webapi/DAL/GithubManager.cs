@@ -1,4 +1,5 @@
 ﻿using Octokit;
+using System.Text;
 
 namespace webapi.DAL
 {
@@ -58,6 +59,11 @@ namespace webapi.DAL
                 return items;
             }
             return items;
+        }
+
+        public async Task<string> GetFileContent(string Owner, string Repo, string Path)
+        {
+            return Encoding.UTF8.GetString(await Client.Repository.Content.GetRawContent(Owner, Repo, Path));
         }
 
         public async Task<IEnumerable<string>> GetRepositories()

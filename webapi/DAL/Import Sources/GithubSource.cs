@@ -2,27 +2,22 @@
 
 namespace webapi.DAL.ImportSources
 {
+    //TODO: Refactor to use octokit instead of httprequest
     public class GithubSource : ImportSource
     {
-        string _token;
         public override bool Authenticate()
         {
-            _token = InstanceSettings.Singleton.GithubAPIKey;
             return true;
         }
 
-        public override string GetData(string source)
+        public override string GetData(string FilePath)
         {
-            using (var httpClient = new HttpClient())
-            {
-                using (var request = new HttpRequestMessage(new HttpMethod("GET"), source))
-                {
-                    request.Headers.TryAddWithoutValidation("Authorization", "token " + _token);
-                    var response = httpClient.SendAsync(request).Result;
+            string Token = InstanceSettings.Singleton.GithubAPIKey;
+            string Owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
+            string Repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
 
-                    return response.Content.ReadAsStringAsync().Result;
-                }
-            }
+            GithubManager ghm = new GithubManager(Token);
+            return ghm.GetFileContent(Owner, Repo, FilePath).Result;
         }
     }
 }
