@@ -3,7 +3,6 @@
   <CodeMirror
     v-model="codeValue"
     :extensions="[luaLang]"
-    :dark="true"
     basic
   />
 </template>
@@ -35,7 +34,18 @@
           }
         },
         codeValue(newVal) {
-          this.$emit('update:modelValue', newVal);
+          this.debouncedEmit(newVal);
+        }
+      },
+      created() {
+        this._debounceTimeout = null;
+      },
+      methods: {
+        debouncedEmit(val) {
+          if (this._debounceTimeout) clearTimeout(this._debounceTimeout);
+          this._debounceTimeout = setTimeout(() => {
+            this.$emit('update:modelValue', val);
+          }, 150);
         }
       }
     });
