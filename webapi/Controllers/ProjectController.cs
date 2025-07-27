@@ -144,4 +144,14 @@ public class ProjectController : ControllerBase
 
         return Ok(export.ToString());
     }
+
+    [HttpGet, Route("/project/importable")]
+    public IActionResult GetImportable(string? Path)
+    {
+        string Token = InstanceSettings.Singleton.GithubAPIKey;
+        string Owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
+        string Repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
+
+        return new OkObjectResult(new GithubManager(Token).GetRepoFolders(Owner, Repo, Path).Result);
+    }
 }

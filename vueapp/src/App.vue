@@ -1,7 +1,7 @@
 <template>
-    <InitialSetupModal :open="true"> </InitialSetupModal>
+    <InitialSetupModal :open="showSetupModal" @close="showSetupModal = false" />
 
-    <div class="flex min-h-screen w-full">
+    <div v-if="loaded" class="flex min-h-screen w-full">
         <ProjectNav @update:project="swapProject" />
         <ObjectNav :project="project" />
         <main class="flex-5 flex flex-col min-h-screen">
@@ -29,8 +29,21 @@ export default {
   },
   data() {
     return {
-      project: 0
+      project: 0,
+      showSetupModal: false,
+      loaded: false
     };
+  },
+  created(){
+    fetch('/api/onboard/' )
+    .then(r => r.text())
+    .then(text => {
+        this.loaded = true;
+        if (text == 'true'){
+          this.showSetupModal = true;
+        }
+        return;
+    });
   },
   methods: {
     swapProject(index) {

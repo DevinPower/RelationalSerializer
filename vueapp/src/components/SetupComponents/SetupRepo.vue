@@ -29,7 +29,7 @@
     </div>
   </div>
   <div class="mt-5 sm:mt-6 flex justify-end">
-    <button type="button" class="mt-3 inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0" @click="validateToken">Next</button>
+    <button type="button" class="mt-3 inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0" @click="setRepo">Next</button>
   </div>
 </template>
 
@@ -64,6 +64,23 @@
         watch: {
         },
         methods: {
+          setRepo(){
+            fetch('/api/onboard/repo', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this.selected.name)
+            } )
+              .then(r => {
+                if (r.status != 200){
+                  r.text().then(error =>{
+                    this.errorCallback(error);
+                  })
+                }
+                else{
+                  this.continueCallback();
+                }
+              });
+          }
         },
     });
 </script>

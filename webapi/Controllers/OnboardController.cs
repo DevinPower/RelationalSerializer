@@ -7,6 +7,7 @@ using webapi.Model;
 using webapi.Model.Modifiers;
 using webapi.Utility;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace webapi.Controllers;
 
@@ -33,8 +34,8 @@ public class OnboardController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost, Route("/onboard/repo")]
-    public IActionResult GetObjects([FromBody]string APIKey)
+    [HttpPost, Route("/onboard/validate")]
+    public IActionResult CheckAPIAccess([FromBody]string APIKey)
     {
         if (string.IsNullOrEmpty(APIKey))
             return new BadRequestObjectResult($"APIKey cannot be empty.");
@@ -72,5 +73,27 @@ public class OnboardController : ControllerBase
         {
             return new RepositoryIndexModel(id++, x);
         }));
+    }
+
+    [HttpPatch, Route("/onboard/repo")]
+    public IActionResult SetWorkingRepository([FromBody]string RepoName)
+    {
+        //TODO: Note that RepoName is {Owner}/{Repository}. We should break this up here before it reaches downstream.
+
+        //TODO: Refactor this
+        InstanceSettings.Singleton.GithubRepository = RepoName;
+
+        ProjectObject SettingsProject = ProjectManager.projects.Where(x => x.Name == "!Settings").First();
+        CustomObject settingsObject = SettingsProject.CustomObjects[0];
+        settingsObject.SetField("GithubRepository", RepoName);
+        DBProjects.UpsertObject(settingsObject, SettingsProject.GUID);
+
+        return new OkResult();
+    }
+
+    [HttpGet, Route("/onboard")]
+    public IActionResult NeedsOnboarding()
+    {
+        return new OkObjectResult(string.IsNullOrEmpty(InstanceSettings.Singleton.GithubRepository));
     }
 }

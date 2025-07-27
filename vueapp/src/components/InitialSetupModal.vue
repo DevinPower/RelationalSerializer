@@ -15,7 +15,7 @@
                 
                 <AlertBox v-if="alertText" :text="alertText"/>
                 <component :is="pageComponents[currentPage]" 
-                    :continueCallback="nextPage"
+                    :continueCallback="setupPages[currentPage].nextCallback"
                     :errorCallback="setError"
                     :backCallback="setupPages[currentPage].backCallback"
                     />
@@ -37,30 +37,40 @@
     import AlertBox from './AlertBox.vue'
     import SetupInfo from './SetupComponents/SetupInfo.vue';
     import SetupAPI from './SetupComponents/SetupAPI.vue';
-import SetupRepo from './SetupComponents/SetupRepo.vue';
+    import SetupRepo from './SetupComponents/SetupRepo.vue';
+    import SetupFinishInfo from './SetupComponents/SetupFinishInfo.vue';
 
     export default defineComponent({
         props: ['open'],
-        emits :[],
+        emits :['close'],
         data() {
             return {
                 currentPage: 0,
                 setupPages:[
-                    {name: 'Info', current: true, backCallback: () => {} },
-                    {name: 'API Key', current: false, backCallback: () => {
+                    {name: 'Info', nextCallback: this.nextPage, backCallback: () => {} },
+                    {name: 'API Key', nextCallback: this.nextPage, backCallback: () => {
                       this.alertText = "";
                       this.currentPage--;
                     }},
-                    {name: 'Repository', current: false, backCallback: () => {} }
+                    {name: 'Repository', nextCallback: this.nextPage, backCallback: () => {
+                      this.alertText = "";
+                      this.currentPage--;
+                    }},
+                    {name: 'Finish', nextCallback: () => {
+                      this.$emit('close');
+                    }, backCallback: () => {
+                      this.alertText = "";
+                      this.currentPage--;
+                    }}
                 ],
-                pageComponents: ['SetupInfo', 'SetupAPI', 'SetupRepo'],
+                pageComponents: ['SetupInfo', 'SetupAPI', 'SetupRepo', 'SetupFinishInfo'],
                 alertText: null
             };
         },
         components: {
             Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot,
             CheckIcon,
-            BreadcrumbNav, AlertBox, SetupInfo, SetupAPI, SetupRepo
+            BreadcrumbNav, AlertBox, SetupInfo, SetupAPI, SetupRepo, SetupFinishInfo
         },
         created() {
         },
@@ -69,9 +79,11 @@ import SetupRepo from './SetupComponents/SetupRepo.vue';
         methods: {
             nextPage(){
                 this.alertText = "";
-                this.setupPages[this.currentPage].current = false;
                 this.currentPage++;
-                this.setupPages[this.currentPage].current = true;
+            },
+            backPacke(){
+                this.alertText = "";
+                this.currentPage--;
             },
             setError(text){
               this.alertText = text;

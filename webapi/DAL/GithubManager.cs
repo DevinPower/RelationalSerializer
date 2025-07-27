@@ -41,12 +41,12 @@ namespace webapi.DAL
             this.Token = Token;
         }
 
-        public async Task<List<GithubItem>> GetRepoFolders(string Owner, string Repo, string Path = "")
+        public async Task<List<GithubItem>> GetRepoFolders(string Owner, string Repo, string Path)
         {
             var items = new List<GithubItem>();
             try
             {
-                var contents = await Client.Repository.Content.GetAllContents(Owner, Repo, Path ?? "");
+                var contents = await Client.Repository.Content.GetAllContents(Owner, Repo, Path);
                 foreach (var item in contents)
                 {
                     items.Add(new GithubItem(item.Name, 

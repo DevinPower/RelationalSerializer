@@ -35,7 +35,7 @@
         },
         methods: {
           validateToken(){
-            fetch('/api/onboard/repo', {
+            fetch('/api/onboard/validate', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(this.apiKey)
@@ -46,8 +46,9 @@
                     this.errorCallback(error);
                   })
                 }
-
-                this.continueCallback();
+                else{
+                  this.continueCallback();
+                }
               });
           }
         },
