@@ -3,7 +3,7 @@
   <CodeMirror
     v-model="codeValue"
     :extensions="[luaLang]"
-    basic
+    basic tab
   />
 </template>
 
