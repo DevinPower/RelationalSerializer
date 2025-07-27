@@ -1,4 +1,9 @@
 <template>
+    <ImportedClassesTable v-if="importedClasses"
+        :importedClasses="importedClasses"/>
+
+    <div style="height:16px"></div>
+
     <div class="post" v-if="!post">
         <RepoBrowser Header="Import" 
             Prompt="Select source files from below to include them as a project."
@@ -7,9 +12,6 @@
             @updir="upDir"
             @select="selectFile"></RepoBrowser>
     </div>
-
-    <ImportedClassesTable v-if="importedClasses"
-        :importedClasses="importedClasses"/>
 </template>
 
 <script lang="js">

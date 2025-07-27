@@ -3,8 +3,11 @@
 
     <div v-if="loaded" class="flex min-h-screen w-full">
 
-        <ProjectNav @update:project="swapProject" :selectedIndex="project" />
-        <div style="width:250px; padding:16px;">
+        <div style="width:200px;">
+          <ProjectNav @update:project="swapProject" :selectedIndex="project" />
+        </div>
+
+        <div style="padding:16px; width:250px;">
           <ObjectNav :project="project" />
         </div>
 
