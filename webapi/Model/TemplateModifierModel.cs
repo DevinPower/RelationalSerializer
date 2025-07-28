@@ -13,7 +13,7 @@ namespace webapi.Model
             this.FieldName = fieldName;
             if (activeModifiers == null)
             {
-                activeModifiers = new List<Modifier>();
+                this.ActiveModifiers = new List<Modifier>();
             }
             else
             {
