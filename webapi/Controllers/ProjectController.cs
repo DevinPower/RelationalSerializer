@@ -147,12 +147,12 @@ public class ProjectController : ControllerBase
     }
 
     [HttpGet, Route("/project/importable")]
-    public IActionResult GetImportable(string? Path)
+    public async Task<IActionResult> GetImportable(string Path)
     {
         string Token = InstanceSettings.Singleton.GithubAPIKey;
         string Owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
         string Repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
 
-        return new OkObjectResult(new GithubManager(Token).GetRepoFolders(Owner, Repo, Path).Result);
+        return new OkObjectResult(await new GithubManager(Token).GetRepoFolders(Owner, Repo, Path));
     }
 }

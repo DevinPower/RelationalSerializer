@@ -35,7 +35,7 @@ public class OnboardController : ControllerBase
     }
 
     [HttpPost, Route("/onboard/validate")]
-    public IActionResult CheckAPIAccess([FromBody]string APIKey)
+    public async Task<IActionResult> CheckAPIAccess([FromBody]string APIKey)
     {
         if (string.IsNullOrEmpty(APIKey))
             return new BadRequestObjectResult($"APIKey cannot be empty.");
@@ -43,9 +43,9 @@ public class OnboardController : ControllerBase
         try
         {
             GithubManager githubManager = new GithubManager(APIKey);
-            var repositoryNames = githubManager.GetRepositories().Result;
+            var repositoryNames = await githubManager.GetRepositories();
 
-            if (repositoryNames.Count() == 0)
+            if (!repositoryNames.Any())
                 return new BadRequestObjectResult("No repositories found.");
         }
         catch (AggregateException)
@@ -65,11 +65,12 @@ public class OnboardController : ControllerBase
     }
 
     [HttpGet, Route("/onboard/listrepositories")]
-    public IActionResult ListRepositories()
+    public async Task<IActionResult> ListRepositories()
     {
         GithubManager githubManager = new GithubManager(InstanceSettings.Singleton.GithubAPIKey);
         int id = 1;
-        return new OkObjectResult(githubManager.GetRepositories().Result.Select(x =>
+        return new OkObjectResult((await githubManager.GetRepositories())
+            .Select(x =>
         {
             return new RepositoryIndexModel(id++, x);
         }));
