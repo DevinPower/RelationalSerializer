@@ -1,5 +1,4 @@
-﻿using MoonSharp.Interpreter;
-using webapi.Model.Modifiers;
+﻿using webapi.Model.Modifiers;
 using webapi.Utility;
 
 namespace webapi.Model

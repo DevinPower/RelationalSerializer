@@ -1,54 +1,65 @@
 <template>
-    <div class="post">
-        <div v-if="post" class="content">
-            <h3 v-if="project && !isInline">{{ this.project }}/{{ this.id }}/{{objectName}}</h3>
+        <div v-if="post" class="p-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 bg-gray-100">
 
-            <table style="width:100%;">
-                <tbody>
-                    <tr v-for="field in post.properties" :key="field">
-                        <td style="width: 10%; vertical-align: top; padding-bottom: 1em;"><b>{{ field.name }}</b><div class="vl"></div></td>
-                        <td style="float: left; width: 90%; padding-bottom: 1em;" v-if="!field.isArray">
-                            <component :is="field.renderComponent" v-model="field.value"
-                                       :additionalData="field.additionalData"
-                                       @update:model-value="updateField(project, id, field.name, field.value)" 
-                                       :selfName="field.name" />
-                        </td>
-                        <td v-else style="padding-bottom: 1em;">
-                            <button class="compose-button" style="float:left;margin-right:-48px;width:48px;" @click="field.value.push(null)">+</button>
-                            <div v-for="(column, index) in field.value" :key="index">
-                                <button class="compose-button red" style="width:48px;float:right;" @click="removeFromArray(field.name, index)">-</button>
+          <div v-for="field in post.properties" :key="field" class="sm:col-span-4">
+            <div v-if="!field.isArray" class="mt-2">
+                <label :for="field.name" class="block text-sm/6 font-medium text-gray-900">{{ field.name }}</label>
+                <component :is="field.renderComponent" v-model="field.value"
+                    :additionalData="field.additionalData"
+                    @update:model-value="updateField(project, id, field.name, field.value)" 
+                    :selfName="field.name" />
 
-                                <component :is="field.renderComponent" v-model="field.value[index]"
-                                           :additionalData="field.additionalData"
-                                           @update:model-value="updateField(project, id, field.name + '[' + index + ']', field.value[index])"
-                                           style="margin-bottom:4px; width:calc(90% - 96px);margin-left:96px;" 
-                                           :selfName="field.name + '[' + index + ']'"/>
-                            </div>
-                        </td>
+            </div>
 
-                    </tr>
-                </tbody>
-            </table>
-            <!--<textarea type="text" readonly style="width:100%;height:100px;">
-        {{JSON.stringify(this.post, null, 4)}}
-    </textarea>-->
+            <div v-else class="mt-2">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div class="w-full border-t border-gray-300" />
+                    </div>
+                    <div class="relative flex items-center justify-between">
+                        <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
+                        <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                            <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
+                            <span>+</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div v-for="(column, index) in field.value" :key="index" class="p-1">
+
+                    <button @click="removeFromArray(field.name, index)" style="float:right" type="button" class="rounded-full bg-red-600 p-1 text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                        <MinusIcon class="size-4" aria-hidden="true" />
+                    </button>
+
+                    <component :is="field.renderComponent" v-model="field.value[index]"
+                                :additionalData="field.additionalData"
+                                @update:model-value="updateField(project, id, field.name + '[' + index + ']', field.value[index])"
+                                style="margin-bottom:4px; width:calc(90% - 96px);margin-left:96px;" 
+                                :selfName="field.name + '[' + index + ']'"/>
+                </div>
+
+            </div>
+
+          </div>
+
         </div>
-    </div>
 </template>
 
 <script lang="js">
     import { defineComponent, computed } from 'vue';
     import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+    import {  PlusIcon, MinusIcon
+        } from '@heroicons/vue/24/outline';
 
-    import FC_Default from './FieldComponents/FC_Default'
-    import FC_RichText from './FieldComponents/FC_RichText'
-    import FC_Code from './FieldComponents/FC_Code'
-    import FC_Reference from './FieldComponents/FC_Reference'
-    import FC_Toggle from './FieldComponents/FC_Toggle'
-    import FC_Number from './FieldComponents/FC_Number'
-    import FC_Choice from './FieldComponents/FC_Choice'
-    import FC_Slider from './FieldComponents/FC_Slider'
-    import FC_InlineReference from './FieldComponents/FC_InlineReference'
+    import FC_Default from './FieldComponents/FC_Default.vue'
+    import FC_RichText from './FieldComponents/FC_RichText.vue'
+    import FC_Code from './FieldComponents/FC_Code.vue'
+    import FC_Reference from './FieldComponents/FC_Reference.vue'
+    import FC_Toggle from './FieldComponents/FC_Toggle.vue'
+    import FC_Number from './FieldComponents/FC_Number.vue'
+    import FC_Choice from './FieldComponents/FC_Choice.vue'
+    import FC_Slider from './FieldComponents/FC_Slider.vue'
+    import FC_InlineReference from './FieldComponents/FC_InlineReference.vue'
 
     const connection = new HubConnectionBuilder()
         .withUrl('/api/CoopHub')
@@ -83,7 +94,8 @@
             FC_Number,
             FC_Choice,
             FC_Slider,
-            FC_InlineReference
+            FC_InlineReference,
+            PlusIcon, MinusIcon
         },
         created() {  
             connection.on('updatefieldfromother', (fieldname, value) => {
@@ -144,13 +156,3 @@
         },
     });
 </script>
-
-<style>
-    .red {
-        background-color: #e74c3c;
-    }
-
-        .red:hover {
-            background-color: #c0392b;
-        }
-</style>

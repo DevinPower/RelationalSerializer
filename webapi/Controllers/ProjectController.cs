@@ -87,16 +87,16 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut, Route("/project/import")]
-    public IActionResult ImportProject(string url)
+    public IActionResult ImportProject([FromBody]string Path)
     {
         ImportSource source = new GithubSource();
 
         source.Authenticate();
-        IActionResult returnedValue = CreateProject(source.GetData(url));
+        IActionResult returnedValue = CreateProject(source.GetData(Path));
 
         List<string> newProjects = ((OkObjectResult)returnedValue).Value as List<string>;
         foreach(string project in newProjects)
-            DBProjects.InsertSource(project, "Github", url);
+            DBProjects.InsertSource(project, "Github", Path);
 
         return returnedValue;
     }
@@ -112,7 +112,8 @@ public class ProjectController : ControllerBase
     [HttpPost, Route("/project/ALL/reimport")]
     public IActionResult ReimportAll()
     {
-        foreach (var project in DBProjects.GetProjects())
+        foreach (var project in DBProjects.GetProjects()
+                     .Where(project => project.Name[0] != '!' ))
             ImportProject(DBProjects.GetSourceByName(project.Name));
 
         return Ok();
@@ -143,5 +144,15 @@ public class ProjectController : ControllerBase
         export.Append("}");
 
         return Ok(export.ToString());
+    }
+
+    [HttpGet, Route("/project/importable")]
+    public async Task<IActionResult> GetImportable(string Path)
+    {
+        string Token = InstanceSettings.Singleton.GithubAPIKey;
+        string Owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
+        string Repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
+
+        return new OkObjectResult(await new GithubManager(Token).GetRepoFolders(Owner, Repo, Path));
     }
 }

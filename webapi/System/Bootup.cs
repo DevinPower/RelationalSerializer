@@ -108,8 +108,6 @@ namespace webapi
         static void CreateSettingsObject(ProjectObject SettingsProject)
         {
             CustomObject settingsObject = SettingsProject.Templates.First().Copy();
-            settingsObject.SetField("CodeImportLanguage", "csharp");
-            settingsObject.SetField("CodeEditorTheme", "vs2015");
             SettingsProject.AddObject(settingsObject);
             DBProjects.UpsertObject(settingsObject.Copy(), SettingsProject.GUID);
         }

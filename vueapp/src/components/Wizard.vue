@@ -1,48 +1,79 @@
 <template>
+    <ImportedClassesTable v-if="importedClasses"
+        :importedClasses="importedClasses"/>
+
+    <div style="height:16px"></div>
+
     <div class="post" v-if="!post">
-        <input type="file" id="newClass" name="filename" @change="AddFile" style="width:80%;">
-        <FC_Code v-model="fileContent" style="width:80%;" additionalData="{language: 'xml'}"></FC_Code>
-        <button @click="SendFile(this.fileContent)">Let's go!</button>
-    </div>
-    <div v-else>
-        {{this.post}}
+        <RepoBrowser Header="Import" 
+            Prompt="Select source files from below to include them as a project."
+            :directory="directory"
+            @cd="selectFolder"
+            @updir="upDir"
+            @select="selectFile"></RepoBrowser>
     </div>
 </template>
 
 <script lang="js">
     import { defineComponent } from 'vue';
-    import FC_Code from './FieldComponents/FC_Code.vue'
+    import ImportedClassesTable from './ImportedClassesTable.vue';
+    import RepoBrowser from './RepoBrowser.vue';
 
     export default defineComponent({
         data() {
             return {
-                loading: false,
-                fileContent : ""
+                directory: [],
+                cd: '/',
+                importedClasses: null
             };
         },
         components: {
-            FC_Code
+            RepoBrowser, ImportedClassesTable
         },
         created() {
+            this.getPath();
+            this.getExistingClasses();
         },
         watch: {
         },
         methods: {
-            AddFile(event){
-                const reader = new FileReader();
-                reader.onload = (res) => {
-                  this.fileContent = res.target.result;
-                };
-
-                reader.readAsText(event.target.files[0]);
+            selectFolder(appendValue){
+                this.cd += '/' + appendValue;
+                this.getPath();
             },
-            SendFile(fileContents) { 
-                fetch('/api/project/create',{
-                    method: "PUT",
-                    body: JSON.stringify(fileContents),
-                    headers: { "Content-Type": "application/json" }
-                }).then((response) => response.text())
-                    .then((x) => this.post = x);
+            upDir(){
+                if (this.cd === '/' || this.cd === '') return;
+                // Remove trailing slash if present (except root)
+                let path = this.cd.replace(/\/$/, '');
+                // Remove last segment
+                path = path.substring(0, path.lastIndexOf('/'));
+                // Ensure at least '/'
+                this.cd = path === '' ? '/' : path;
+                this.getPath();
+            },
+            getPath(){
+                fetch(`/api/project/importable?Path=${this.cd}` )
+                    .then(r => r.json())
+                    .then(json => {
+                        this.directory = json;
+                        this.loading = false;
+                        return;
+                    });
+            },
+            selectFile(filepath){
+                fetch('/api/project/import', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.cd + '/' + filepath)
+                    });
+            },
+            getExistingClasses(){
+            fetch('/api/project' )
+                .then(r => r.json())
+                .then(json => {
+                    this.importedClasses = json;
+                    return;
+                });
             }
         },
     });

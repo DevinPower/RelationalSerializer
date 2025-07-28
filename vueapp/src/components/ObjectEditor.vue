@@ -31,13 +31,13 @@
 <script lang="js">
     import { defineComponent } from 'vue';
 
-    import FC_Default from './FieldComponents/FC_Default'
-    import FC_RichText from './FieldComponents/FC_RichText'
-    import FC_Code from './FieldComponents/FC_Code'
-    import FC_Reference from './FieldComponents/FC_Reference'
-    import FC_Toggle from './FieldComponents/FC_Toggle'
-    import FC_Number from './FieldComponents/FC_Number'
-    import FC_InlineReference from './FieldComponents/FC_InlineReference'
+    import FC_Default from './FieldComponents/FC_Default.vue'
+    import FC_RichText from './FieldComponents/FC_RichText.vue'
+    import FC_Code from './FieldComponents/FC_Code.vue'
+    import FC_Reference from './FieldComponents/FC_Reference.vue'
+    import FC_Toggle from './FieldComponents/FC_Toggle.vue'
+    import FC_Number from './FieldComponents/FC_Number.vue'
+    import FC_InlineReference from './FieldComponents/FC_InlineReference.vue'
 
     export default defineComponent({
         props: ['editing', 'hideJSON'],

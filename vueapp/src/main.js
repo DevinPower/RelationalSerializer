@@ -6,7 +6,9 @@ import TemplateEditor from './components/TemplateEditor.vue'
 import TemplatesList from './components/TemplatesList.vue'
 import { createRouter, createWebHistory } from 'vue-router';
 import VueSimpleContextMenu from 'vue-simple-context-menu';
+
 import 'vue-simple-context-menu/dist/vue-simple-context-menu.css';
+import './assets/main.css';
 
 const routes = [
     {

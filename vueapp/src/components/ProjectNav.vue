@@ -1,24 +1,52 @@
 <template>
-    <div class="post">
-        <h2 style="padding-left:20px;">Projects</h2>
-        <div v-if="post" class="content scrollView" style="padding-left:20px">
-            <div v-for="(project, index) in post" :key="index" style="margin-top: 4px; white-space: nowrap; width:100%;">
-                <a @click="changeProject(index)" class="navEntry" style="cursor:pointer;">{{ project.name }}</a>
-            </div>
-
-        </div>
+  <div class="min-h-screen flex flex-col fixed top-0">
+    <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6">
+      <nav class="flex flex-1 flex-col" aria-label="Sidebar" style="padding:16px;">
+        <ul role="list" class="flex flex-1 flex-col gap-y-7">
+          <li>
+            <ul role="list" class="-mx-2 space-y-1">
+              <li v-for="item in navigation" :key="item.name">
+                <router-link :to="item.href" :class="[item.current ? 'bg-indigo-700 text-white' : 'text-indigo-200 hover:bg-indigo-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                  <component :is="item.icon" :class="[item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white', 'size-6 shrink-0']" aria-hidden="true" />{{ item.name }}
+                </router-link>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <div class="text-xs/6 font-semibold text-gray-400">Projects</div>
+            <ul role="list" class="-mx-2 mt-2 space-y-1">
+              <li v-for="(item, index) in secondaryNavigation" :key="item.name">
+                  <a style="cursor: pointer;" @click="changeProject(index)" :href="item.href" :class="[selectedIndex == index ? 'bg-indigo-700 text-white' : 'text-indigo-200 hover:bg-indigo-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                    <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">{{ item.name[0] }}</span>
+                    <span class="truncate">{{ item.name }}</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
     </div>
+  </div>
 </template>
 
-<script lang="js">
-    import { defineComponent } from 'vue';
+<script>
+import { defineComponent } from 'vue';
+import {
+  HomeIcon,
+  CodeBracketSquareIcon
+} from '@heroicons/vue/24/outline'
 
     export default defineComponent({
         emits: ['update:project'],
+        props: ['selectedIndex'],
         data() {
             return {
                 loading: false,
-                post: null
+                navigation : [
+                  { name: 'Import', href: '/import', icon: CodeBracketSquareIcon, current: false }
+                ],
+                secondaryNavigation: [
+                ]
             };
         },
         created() {
@@ -41,7 +69,8 @@
                 fetch('/api/project' )
                     .then(r => r.json())
                     .then(json => {
-                        this.post = json;
+                        this.secondaryNavigation = json;
+                        this.secondaryNavigation[0].current = true;
                         this.loading = false;
                         return;
                     });
@@ -49,55 +78,3 @@
         },
     });
 </script>
-
-<style>
-    .scrollView {
-        height: 100vh;
-        overflow-y:auto;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #f0f0f0;
-    }
-
-    .navEntry {
-        display: inline-block;
-        width:100%;
-    }
-
-        .navEntry:hover {
-            background-color: #818181;
-            color: #333333;
-        }
-
-    .compose-button {
-        background-color: #27ae60;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-        .compose-button i {
-            margin-right: 8px;
-        }
-
-        /* Click animation */
-        .compose-button:active {
-            transform: scale(0.95);
-        }
-
-        .compose-button:hover {
-            background-color: #218c53;
-        }
-</style>

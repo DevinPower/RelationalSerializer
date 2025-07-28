@@ -114,9 +114,7 @@ namespace webapi.Model
                     {
                         if (customField.IsReference)
                         {
-                            List<string> referenceStrings = (customField.Value as JArray)
-                                .Select(x=>x.Value<string>())
-                                .ToList();
+                             List<string> referenceStrings = (customField.Value as IEnumerable<object>)?.Select(x => x?.ToString()).ToList();
 
                             serialValue = "[";
                             if (referenceStrings != null)
