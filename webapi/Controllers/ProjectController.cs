@@ -83,7 +83,7 @@ public class ProjectController : ControllerBase
 
         await ProjectManager.projects[id].CreateObject(newObject, ProjectManager.projects[id].GUID);
 
-        return Ok();
+        return new OkObjectResult(new NavModel("new object", newObject.GUID, false));
     }
 
     [HttpPut, Route("/project/import")]

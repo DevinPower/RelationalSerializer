@@ -1,4 +1,6 @@
 <template>
+    <title>RS - {{ projectName }}</title>
+
     <InitialSetupModal :open="showSetupModal" @close="showSetupModal = false" />
 
     <div v-if="loaded" class="flex min-h-screen w-full">
@@ -12,7 +14,7 @@
         </div>
 
 
-        <main class="flex-5 flex flex-col min-h-screen">
+        <main class="flex-5 flex flex-col min-h-screen bg-gray-100">
             <div class="router-view-container grow flex flex-col">
                 <router-view class="router-view-content grow" />
             </div>
@@ -37,6 +39,7 @@
     },
     data() {
       return {
+        projectName: 'demo',
         showSetupModal: false,
         loaded: false
       };

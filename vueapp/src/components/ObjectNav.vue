@@ -20,7 +20,7 @@
         <div class="flex flex-1 w-full justify-center px-2">
             <div class="grid w-full grid-cols-1">
                 <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block w-full rounded-md bg-gray-700 py-1.5 pr-3 pl-10 text-base text-white outline-hidden placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 sm:text-sm/6" 
-                placeholder="Search" v-model="searchText" />
+                    placeholder="Search" v-model="searchText" />
                 <MagnifyingGlassIcon class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400" aria-hidden="true" />
             </div>
         </div>
@@ -35,12 +35,15 @@
                 @contextmenu.prevent.stop="handleClick($event, object.guid)"
                 :style="{
                     color: object.exportExcluded ? '#636363' : 'all',
-                    backgroundColor: id == object.guid ? '#f3f4f6' : 'inherit',
+                    backgroundColor: (id == object.guid || hoverGuid === object.guid) ? 
+                                        '#f3f4f6' : 'inherit',
                     padding: '0',
                     marginLeft: '-16px',
                     marginRight: '-16px',
                     width: 'calc(100% + 32px)'
                 }"
+                @mouseover="hoverGuid = object.guid"
+                @mouseout="hoverGuid = null"
             >
                 <small>{</small> {{ object.name }} <small>}</small>
             </router-link>
@@ -69,17 +72,23 @@
                 projectName: "",
                 searchText: "",
                 contextGuid: "",
+                hoverGuid: null,
                 contextArray: [
                     {
-                        name: 'Duplicate', value: function (item) {
+                        name: 'Duplicate', value: (item) => {
                             fetch('/api/object/' + item.project + '/' + item.guid + '/duplicate', {
                                 method: "PUT",
                                 headers: { "Content-Type": "application/json" }
+                            }).then(r => {
+                                r.json().then(
+                                    newObject => {
+                                        this.post.push(newObject)
+                                });
                             });
                         }
                     },
                     {
-                        name: 'Exclude', value: function (item) {
+                        name: 'Exclude', value: (item) => {
                             fetch('/api/object/' + item.project + '/' + item.guid + '/exporttoggle', {
                                 method: "PATCH",
                                 headers: { "Content-Type": "application/json" }
@@ -87,19 +96,24 @@
                         }
                     },
                     {
-                        name: 'Delete', value: function (item) {
+                        name: 'Delete', value: (item) => {
                             fetch('/api/object/' + item.project + '/' + item.guid + '/delete', {
                                 method: "DELETE",
                                 headers: { "Content-Type": "application/json" }
+                            }).then(x =>{
+                                if (x.status == 200){
+                                    this.post = this.post.filter(obj => obj.guid !== item.guid);
+                                    if (item.guid == this.id)
+                                        this.$router.push({ path: `/edit/${this.project}/undefined` });
+                                }
                             });
                         }
                     },
                     {
-                        name: 'Copy Guid', value: function (item) {
+                        name: 'Copy Guid', value: (item) => {
                             navigator.clipboard.writeText(item.guid);
                         }
                     }
-                    
                 ],
             };
         },
@@ -141,7 +155,12 @@
                     method: "PUT",
                     headers: { "Content-Type": "application/json" }
                 })
-                .then(this.fetchData());
+                .then(r => {
+                    r.json().then(
+                        newObject => {
+                            this.post.push(newObject)
+                    });
+                });
             },
             handleClick(event, item) {
                 const itemWrapper = { project: this.project, guid: item };

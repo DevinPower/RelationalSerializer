@@ -35,7 +35,7 @@ public class ObjectController : ControllerBase
 
         ProjectManager.projects[project].CustomObjects.Add(customObject);
         await DBProjects.UpsertObjectAsync(customObject, ProjectManager.projects[project].GUID);
-        return Ok();
+        return new OkObjectResult(new NavModel(customObject.GetDisplayName(), customObject.GUID, customObject.ExcludeExport));
     }
 
     [HttpDelete, Route("/object/{project:int}/{guid}/delete")]
