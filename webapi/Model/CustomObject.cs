@@ -39,13 +39,13 @@ namespace webapi.Model
 
         public void SetField(string FieldName, object Value)
         {
-            CustomField customField = CustomFields.Where(x => x.Name == FieldName).First();
+            CustomField customField = CustomFields.First(x => x.Name == FieldName);
             customField.Value = Value;
         }
 
         public object GetField(string FieldName)
         {
-            return CustomFields.Where(x => x.Name == FieldName).First().Value;
+            return CustomFields.First(x => x.Name == FieldName).Value;
         }
 
         public CustomObject Copy()
@@ -173,7 +173,7 @@ namespace webapi.Model
             PropertyInfo[] properties = newObject.GetType().GetProperties();
             foreach (PropertyInfo property in properties)
             {
-                CustomField customField = CustomFields.Where(x => x.Name == property.Name).First();
+                CustomField customField = CustomFields.First(x => x.Name == property.Name);
                 property.SetValue(newObject, customField.Value);
             }
             return newObject;

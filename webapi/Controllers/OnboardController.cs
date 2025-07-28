@@ -56,10 +56,10 @@ public class OnboardController : ControllerBase
         //TODO: Refactor this
         InstanceSettings.Singleton.GithubAPIKey = APIKey;
 
-        ProjectObject SettingsProject = ProjectManager.projects.Where(x => x.Name == "!Settings").First();
+        ProjectObject SettingsProject = ProjectManager.projects.First(x => x.Name == "!Settings");
         CustomObject settingsObject = SettingsProject.CustomObjects[0];
         settingsObject.SetField("GithubAPIKey", APIKey);
-        DBProjects.UpsertObject(settingsObject, SettingsProject.GUID);
+        await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
         return new OkResult();
     }
@@ -77,17 +77,17 @@ public class OnboardController : ControllerBase
     }
 
     [HttpPatch, Route("/onboard/repo")]
-    public IActionResult SetWorkingRepository([FromBody]string RepoName)
+    public async Task<IActionResult> SetWorkingRepository([FromBody]string RepoName)
     {
         //TODO: Note that RepoName is {Owner}/{Repository}. We should break this up here before it reaches downstream.
 
         //TODO: Refactor this
         InstanceSettings.Singleton.GithubRepository = RepoName;
 
-        ProjectObject SettingsProject = ProjectManager.projects.Where(x => x.Name == "!Settings").First();
+        ProjectObject SettingsProject = ProjectManager.projects.First(x => x.Name == "!Settings");
         CustomObject settingsObject = SettingsProject.CustomObjects[0];
         settingsObject.SetField("GithubRepository", RepoName);
-        DBProjects.UpsertObject(settingsObject, SettingsProject.GUID);
+        await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
         return new OkResult();
     }

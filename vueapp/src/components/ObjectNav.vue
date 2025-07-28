@@ -28,11 +28,22 @@
         <div style="height:16px;" />
 
         <div v-for="object in post" :key="object" class="w-full">
-                            <router-link v-if="object.name.toUpperCase().includes(searchText.toUpperCase())"
-                             class="w-full block" :to="{ path: '/edit/' + project + '/' + object.guid }"
-                             @contextmenu.prevent.stop="handleClick($event, object.guid)"
-                             :style="{ color: object.exportExcluded ? '#636363' : 'all'
-                              }"><small>{</small> {{ object.name }} <small>}</small></router-link>
+            <router-link
+                v-if="object.name.toUpperCase().includes(searchText.toUpperCase())"
+                class="w-full block"
+                :to="{ path: '/edit/' + project + '/' + object.guid }"
+                @contextmenu.prevent.stop="handleClick($event, object.guid)"
+                :style="{
+                    color: object.exportExcluded ? '#636363' : 'all',
+                    backgroundColor: id == object.guid ? '#f3f4f6' : 'inherit',
+                    padding: '0',
+                    marginLeft: '-16px',
+                    marginRight: '-16px',
+                    width: 'calc(100% + 32px)'
+                }"
+            >
+                <small>{</small> {{ object.name }} <small>}</small>
+            </router-link>
         </div>
 
     </div>
@@ -50,7 +61,7 @@
         } from '@heroicons/vue/24/outline';
 
     export default defineComponent({
-        props: ['project'],
+        props: ['project', 'id'],
         data() {
             return {
                 loading: false,

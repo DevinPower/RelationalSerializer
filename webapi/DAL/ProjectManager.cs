@@ -12,10 +12,10 @@ namespace webapi.DAL
             return projects.Count - 1;
         }
 
-        public static void DeleteProject(string GUID)
+        public static async Task DeleteProject(string GUID)
         {
             int index = projects.IndexOf(projects.Find(x => x.GUID == GUID));
-            DBProjects.DeleteProject(GUID);
+            await DBProjects.DeleteProjectAsync(GUID);
             projects.RemoveAt(index);
         }
 

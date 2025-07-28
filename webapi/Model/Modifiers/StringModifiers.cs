@@ -63,6 +63,27 @@ namespace webapi.Model.Modifiers
         }
     }
 
+    public class TypeSwapTextArea : Modifier
+    {
+        public override bool CanTargetProperty(CustomObject owner, CustomField field)
+        {
+            return field.UnderlyingType == "string" && field.EditorType == "FC_Default";
+        }
+
+        public override void OnApply(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRemove(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRender(RenderField field)
+        {
+            field.RenderComponent = "FC_TextArea";
+        }
+    }
+
     public class NameField : Modifier
     {
         public override bool CanTargetProperty(CustomObject owner, CustomField field)

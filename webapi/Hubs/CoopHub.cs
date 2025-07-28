@@ -26,7 +26,7 @@ namespace webapi
             Model.CustomObject obj = ProjectManager.projects[projectInteger].CustomObjects.First(x => x.GUID == objectid);
 
             CustomField field = obj.CustomFields
-                .Where(x => x.Name == Field).First();
+                .First(x => x.Name == Field);
             if (!field.IsArray)
             {
                 object oldValue = field.Value;
@@ -52,7 +52,7 @@ namespace webapi
                 await Clients.All.SendAsync("updateArrayFromOther", Field, Value, arrayIndex);
             }
             
-            DBProjects.UpsertField(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
+            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
         }
 
         public async Task RemoveFromArray(string project, string objectid, string Field, int index)
@@ -72,7 +72,7 @@ namespace webapi
 
             await Clients.Others.SendAsync("removeFromArrayFromOther", Field, index);
 
-            DBProjects.UpsertField(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
+            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
         }
 
         public async Task InstantiateIntoField(string project, string guid, string field)

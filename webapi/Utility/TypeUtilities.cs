@@ -35,9 +35,9 @@ namespace webapi.Utility
             return ProjectManager.projects.FindIndex(x => x.Name == name);
         }
 
-        public static bool IsEnum(string type)
+        public static async Task<bool> IsEnum(string type)
         {
-            return DBProjects.GetEnumTypes().Contains(type);
+            return (await DBProjects.GetEnumTypesAsync()).Contains(type);
         }
     }
 }

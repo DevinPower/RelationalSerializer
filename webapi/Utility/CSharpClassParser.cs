@@ -34,22 +34,20 @@ namespace webapi.Utility
                 }
             });
 
-
-
             return objectTemplate;
         }
 
-        public void AddAsNewProject()
+        public async Task AddAsNewProject()
         {
             CustomObject objectTemplate = GetObjectTemplate();
 
             List<CustomObject> templates = new List<CustomObject>() { objectTemplate };
 
             ProjectObject newProject = new ProjectObject(this.Name, templates);
-            DBProjects.CreateProject(newProject);
+            await DBProjects.CreateProjectAsync(newProject);
 
             ProjectManager.AddProject(newProject);
-            DBProjects.UpsertMods(objectTemplate);
+            await DBProjects.UpsertModsAsync(objectTemplate);
         }
 
         public void LoadIntoExistingProject(ProjectObject existingProject)
@@ -93,7 +91,7 @@ namespace webapi.Utility
                             customEnum.AddValue(ms.Identifier.ToString(), i++);
                         }
                     }
-                    DBProjects.InsertEnum(customEnum);
+                    DBProjects.InsertEnumAsync(customEnum);
                 }
 
                 PropertyDeclarationSyntax[] properties = readClass.DescendantNodes()
@@ -133,7 +131,7 @@ namespace webapi.Utility
 
                     CustomField newField;
 
-                    if (TypeUtilities.IsEnum(fieldType))
+                    if (TypeUtilities.IsEnum(fieldType).Result)
                     {
                         newField = new CustomField(propertyName, "enum", isArray);
                         newField.Modifiers.Add(new Model.Modifiers.ChoiceModifier() { EnumName = fieldType });
@@ -142,11 +140,6 @@ namespace webapi.Utility
                     {
                         newField = new CustomField(propertyName, fieldType, isArray);
                     }
-
-                    //else if (ConvertedClass.generics.Where(x => (x.name == tS)).Count() == 0)
-                    //{
-                    //    cc.addField(identifierNames[i], "reference", isList, tS);
-                    //}
 
                     parsedFields.Add(newField);
                 }

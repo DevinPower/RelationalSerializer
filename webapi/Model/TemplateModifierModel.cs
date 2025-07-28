@@ -45,7 +45,7 @@ namespace webapi.Model
                 Modifier underlyingModifier = (Modifier)Activator.CreateInstance(type);
                 foreach (var property in type.GetProperties())
                 {
-                    var value = renderObject.Properties.Where(x => x.Name == property.Name).First().Value;
+                    var value = renderObject.Properties.First(x => x.Name == property.Name).Value;
                     property.SetValue(underlyingModifier, value);
                 }
 

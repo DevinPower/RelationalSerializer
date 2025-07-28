@@ -53,7 +53,7 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut, Route("/project/create")]
-    public IActionResult CreateProject([FromBody] string source)
+    public async Task<IActionResult> CreateProject([FromBody] string source)
     {
         CSharpClassParser parser = new CSharpClassParser();
         List<ParsedClass> classes = parser.GetTemplateClasses(source);
@@ -68,7 +68,7 @@ public class ProjectController : ControllerBase
             }
             else
             {
-                NewClass.AddAsNewProject();
+                await NewClass.AddAsNewProject();
                 createdProjects.Add(NewClass.Name);
             }
         }
@@ -77,52 +77,55 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut, Route("/project/{id:int}/objects")]
-    public IActionResult CreateObject(int id)
+    public async Task<IActionResult> CreateObject(int id)
     {
         CustomObject newObject = ProjectManager.projects[id].Templates[0].Copy();
 
-        ProjectManager.projects[id].CreateObject(newObject, ProjectManager.projects[id].GUID);
+        await ProjectManager.projects[id].CreateObject(newObject, ProjectManager.projects[id].GUID);
 
         return Ok();
     }
 
     [HttpPut, Route("/project/import")]
-    public IActionResult ImportProject([FromBody]string Path)
+    public async Task<IActionResult> ImportProject([FromBody]string Path)
     {
+        List<Task> tasks = new List<Task>();
         ImportSource source = new GithubSource();
 
         source.Authenticate();
-        IActionResult returnedValue = CreateProject(source.GetData(Path));
+        IActionResult returnedValue = await CreateProject(source.GetData(Path));
 
         List<string> newProjects = ((OkObjectResult)returnedValue).Value as List<string>;
         foreach(string project in newProjects)
-            DBProjects.InsertSource(project, "Github", Path);
+            tasks.Add(DBProjects.InsertSourceAsync(project, "Github", Path));
+
+        await Task.WhenAll(tasks);
 
         return returnedValue;
     }
 
     [HttpPut, Route("/project/{projectName}/reimport")]
-    public IActionResult Reimport(string projectName)
+    public async Task<IActionResult> Reimport(string projectName)
     {
-        string sourceURL = DBProjects.GetSourceByName(projectName);
-        ImportProject(sourceURL);
+        string sourceURL = await DBProjects.GetSourceByNameAsync(projectName);
+        await ImportProject(sourceURL);
         return Ok();
     }
 
     [HttpPost, Route("/project/ALL/reimport")]
-    public IActionResult ReimportAll()
+    public async Task<IActionResult> ReimportAll()
     {
-        foreach (var project in DBProjects.GetProjects()
+        foreach (var project in (await DBProjects.GetProjectsAsync())
                      .Where(project => project.Name[0] != '!' ))
-            ImportProject(DBProjects.GetSourceByName(project.Name));
+            await ImportProject(await DBProjects.GetSourceByNameAsync(project.Name));
 
         return Ok();
     }
 
     [HttpDelete, Route("/project/{guid}/delete")]
-    public IActionResult DeleteProject(string guid)
+    public async Task<IActionResult> DeleteProject(string guid)
     {
-        ProjectManager.DeleteProject(guid);
+        await ProjectManager.DeleteProject(guid);
         return Ok();
     }
 

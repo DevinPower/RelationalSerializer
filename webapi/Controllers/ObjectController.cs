@@ -20,36 +20,37 @@ public class ObjectController : ControllerBase
     [HttpGet, Route("/object/{project:int}/{id}")]
     public IActionResult GetObject(int project, string id)
     {
-        RenderObject renderObject = new RenderObject(ProjectManager.projects[project].CustomObjects
-            .Where(x => x.GUID == id).First());
+        CustomObject requestedObject = ProjectManager.projects[project].CustomObjects
+                    .First(x => x.GUID == id);
+        RenderObject renderObject = new RenderObject(requestedObject);
 
         return Ok(renderObject);
     }
 
     [HttpPut, Route("/object/{project:int}/{guid}/duplicate")]
-    public IActionResult CopyObject(int project, string guid)
+    public async Task<IActionResult> CopyObject(int project, string guid)
     {
         CustomObject customObject = ProjectManager.projects[project].CustomObjects
-            .Where(x => x.GUID == guid).First().Copy();
+            .First(x => x.GUID == guid).Copy();
 
         ProjectManager.projects[project].CustomObjects.Add(customObject);
-        DBProjects.UpsertObject(customObject, ProjectManager.projects[project].GUID);
+        await DBProjects.UpsertObjectAsync(customObject, ProjectManager.projects[project].GUID);
         return Ok();
     }
 
     [HttpDelete, Route("/object/{project:int}/{guid}/delete")]
-    public IActionResult DeleteObject(int project, string guid)
+    public async Task<IActionResult> DeleteObject(int project, string guid)
     {
-        ProjectManager.projects[project].DeleteObject(guid);
+        await ProjectManager.projects[project].DeleteObject(guid);
         return Ok();
     }
 
     [HttpPatch, Route("/object/{project:int}/{guid}/exporttoggle")]
-    public IActionResult SetExportSetting(int project, string guid)
+    public async Task<IActionResult> SetExportSetting(int project, string guid)
     {
-        CustomObject customObject = ProjectManager.projects[project].CustomObjects.Where(x => x.GUID == guid).First();
+        CustomObject customObject = ProjectManager.projects[project].CustomObjects.First(x => x.GUID == guid);
         customObject.ExcludeExport = !customObject.ExcludeExport;
-        DBProjects.SetExportExclude(guid, customObject.ExcludeExport);
+        await DBProjects.SetExportExcludeAsync(guid, customObject.ExcludeExport);
         return Ok();
     }
 
@@ -59,13 +60,14 @@ public class ObjectController : ControllerBase
         return Ok(new RenderModifierObject(ProjectManager.projects[project].Templates[0]));
     }
 
+    //TODO: Too much logic in the actual endpoint
     [HttpPatch, Route("/object/{project:int}/template")]
     public IActionResult SetTemplate(int project, int templateNumber, [FromBody] List<JObject> modifierDynamic)
     {
         CustomObject customObject = ProjectManager.projects[project].Templates[0];
         foreach (CustomField customField in customObject.CustomFields)
         {
-            JToken modifierField = modifierDynamic.Cast<JToken>().Where(x => x["name"].Value<string>() == customField.Name).First();
+            JToken modifierField = modifierDynamic.Cast<JToken>().First(x => x["name"].Value<string>() == customField.Name);
             JArray activeModifiers = modifierField["activeModifiers"].ToObject<JArray>();
             JArray inactiveModifiers = modifierField["availableModifiers"].ToObject<JArray>();
 
@@ -128,7 +130,7 @@ public class ObjectController : ControllerBase
             }
         }
 
-        DBProjects.UpsertMods(customObject);
+        DBProjects.UpsertModsAsync(customObject);
 
         return Ok();
     }

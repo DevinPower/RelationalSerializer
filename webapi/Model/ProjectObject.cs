@@ -27,10 +27,10 @@ namespace webapi.Model
             Name = name;
         }
 
-        public void CreateObject(CustomObject customObject, string projectGUID)
+        public async Task CreateObject(CustomObject customObject, string projectGUID)
         {
             AddObject(customObject);
-            DBProjects.UpsertObject(customObject, projectGUID);
+            await DBProjects.UpsertObjectAsync(customObject, projectGUID);
         }
 
         public void AddObject(CustomObject customObject)
@@ -38,54 +38,65 @@ namespace webapi.Model
             CustomObjects.Add(customObject);
         }
 
-        public void RemoveField(string FieldName)
+        public async Task RemoveField(string FieldName)
         {
+            List<Task> tasks = new List<Task>();
+
             CustomObjects.ForEach(x => {
                 x.CustomFields.RemoveAll(y => y.Name == FieldName);
-                DBProjects.DeleteField(FieldName, x.GUID);
+                tasks.Add(DBProjects.DeleteFieldAsync(FieldName, x.GUID));
             });
 
             Templates.ForEach(x => {
                 x.CustomFields.RemoveAll(y => y.Name == FieldName);
-                DBProjects.DeleteField(FieldName, x.GUID);
+                tasks.Add(DBProjects.DeleteFieldAsync(FieldName, x.GUID));
             });
 
+            await Task.WhenAll(tasks);
         }
 
-        public void AddField(CustomField NewField)
+        public async Task AddField(CustomField NewField)
         {
+            List<Task> tasks = new List<Task>();
+
             CustomObjects.ForEach(x => {
                 x.CustomFields.Add(NewField.Copy());
-                DBProjects.UpsertField(NewField, x.GUID);
+                tasks.Add(DBProjects.UpsertFieldAsync(NewField, x.GUID));
             });
 
             Templates.ForEach(x =>
             {
                 x.CustomFields.Add(NewField.Copy());
-                DBProjects.UpsertField(NewField, x.GUID);
+                tasks.Add(DBProjects.UpsertFieldAsync(NewField, x.GUID));
             });
+
+            await Task.WhenAll(tasks);
         }
 
-        public void ModifyType(string FieldName, string NewType)
+        public async Task ModifyType(string FieldName, string NewType)
         {
+            List<Task> tasks = new List<Task>();
+
             CustomObjects.ForEach(x => {
-                CustomField field = x.CustomFields.Where(y => y.Name == FieldName).First();
+                CustomField field = x.CustomFields.First(y => y.Name == FieldName);
                 field.UnderlyingType = NewType;
-                DBProjects.UpsertField(field, x.GUID);
+                tasks.Add(DBProjects.UpsertFieldAsync(field, x.GUID));
             });
 
             Templates.ForEach(x =>
             {
-                CustomField field = x.CustomFields.Where(y => y.Name == FieldName).First();
+                CustomField field = x.CustomFields.First(y => y.Name == FieldName);
                 field.UnderlyingType = NewType;
-                DBProjects.UpsertField(field, x.GUID);
+                tasks.Add(DBProjects.UpsertFieldAsync(field, x.GUID));
             });
+
+            await Task.WhenAll(tasks);
         }
 
-        public void DeleteObject(string guid)
+        public async Task DeleteObject(string guid)
         {
             CustomObjects.RemoveAll(x => x.GUID == guid);
-            DBProjects.DeleteObject(guid);
+            await DBProjects.DeleteObjectAsync(guid);
         }
 
         public StringBuilder Export(StringBuilder builder, List<string> resolvedGUIDs)

@@ -20,7 +20,6 @@
                         <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
                         <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
                             <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
-                            <span>+</span>
                         </button>
                     </div>
                 </div>
@@ -54,6 +53,7 @@
     import FC_Default from './FieldComponents/FC_Default.vue'
     import FC_RichText from './FieldComponents/FC_RichText.vue'
     import FC_Code from './FieldComponents/FC_Code.vue'
+    import FC_TextArea from './FieldComponents/FC_TextArea.vue'
     import FC_Reference from './FieldComponents/FC_Reference.vue'
     import FC_Toggle from './FieldComponents/FC_Toggle.vue'
     import FC_Number from './FieldComponents/FC_Number.vue'
@@ -89,6 +89,7 @@
             FC_Default,
             FC_RichText,
             FC_Code,
+            FC_TextArea,
             FC_Reference,
             FC_Toggle,
             FC_Number,
