@@ -12,67 +12,67 @@ namespace webapi
     {
         //TODO: Currently this updates for all clients, but we need to make it so it
         //      only updates for the clients that are viewing the same object
-        public async Task UpdateField(string project, string objectid, string Field, object Value)
+        public async Task UpdateField(string project, string objectid, string field, object value)
         {
             int arrayIndex = -1;
-            if (Field.Contains('['))
+            if (field.Contains('['))
             {
-                arrayIndex = int.Parse(Field.Split('[')[1].Split(']')[0]);
-                Field = Field.Split('[')[0];
+                arrayIndex = int.Parse(field.Split('[')[1].Split(']')[0]);
+                field = field.Split('[')[0];
             }
             int projectInteger;
             if (!Int32.TryParse(project, out projectInteger))
                 return;
             Model.CustomObject obj = ProjectManager.projects[projectInteger].CustomObjects.First(x => x.GUID == objectid);
 
-            CustomField field = obj.CustomFields
-                .First(x => x.Name == Field);
-            if (!field.IsArray)
+            CustomField fieldObject = obj.CustomFields
+                .First(x => x.Name == field);
+            if (!fieldObject.IsArray)
             {
-                object oldValue = field.Value;
-                field.Value = Value;
+                object oldValue = fieldObject.Value;
+                fieldObject.Value = value;
 
-                foreach (Modifier modifier in field.Modifiers.Where(x => x is iValidator))
+                foreach (Modifier modifier in fieldObject.Modifiers.Where(x => x is IValidator))
                 {
-                    ((iValidator)modifier).Validate(field, oldValue);
+                    ((IValidator)modifier).Validate(fieldObject, oldValue);
                 }
 
-                await Clients.All.SendAsync("updateFieldFromOther", Field, field.Value);
+                await Clients.All.SendAsync("updateFieldFromOther", field, fieldObject.Value);
             }
             else
             {
-                IEnumerable<object> valueArray = (IEnumerable<object>)field.Value;
+                IEnumerable<object> valueArray = (IEnumerable<object>)fieldObject.Value;
                 List<object> valueList = valueArray.ToList();
                 while (valueList.Count <= arrayIndex)
-                    valueList.Add(Value);
+                    valueList.Add(value);
 
-                valueList[arrayIndex] = Value;
-                field.Value = valueList;
+                valueList[arrayIndex] = value;
+                fieldObject.Value = valueList;
 
-                await Clients.All.SendAsync("updateArrayFromOther", Field, Value, arrayIndex);
+                await Clients.All.SendAsync("updateArrayFromOther", field, value, arrayIndex);
             }
             
-            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
+            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == field), obj.GUID);
         }
 
-        public async Task RemoveFromArray(string project, string objectid, string Field, int index)
+        public async Task RemoveFromArray(string project, string objectid, string field, int index)
         {
             int projectInteger;
             if (!Int32.TryParse(project, out projectInteger))
                 return;
             Model.CustomObject obj = ProjectManager.projects[projectInteger].CustomObjects.First(x => x.GUID == objectid);
 
-            CustomField field = obj.CustomFields
-                .Where(x => x.Name == Field).First();
+            CustomField fieldObject = obj.CustomFields
+                .Where(x => x.Name == field).First();
 
-            IEnumerable<object> valueArray = (IEnumerable<object>)field.Value;
+            IEnumerable<object> valueArray = (IEnumerable<object>)fieldObject.Value;
             List<object> valueList = valueArray.ToList();
             valueList.RemoveAt(index);
-            field.Value = valueList;
+            fieldObject.Value = valueList;
 
-            await Clients.Others.SendAsync("removeFromArrayFromOther", Field, index);
+            await Clients.Others.SendAsync("removeFromArrayFromOther", field, index);
 
-            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == Field), obj.GUID);
+            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == field), obj.GUID);
         }
 
         public async Task InstantiateIntoField(string project, string guid, string field)

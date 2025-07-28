@@ -1,6 +1,6 @@
 ﻿namespace webapi.Model.Modifiers
 {
-    public class MinimumModifier : Modifier, iValidator
+    public class MinimumModifier : Modifier, IValidator
     {
         public int Minimum { get; set; }
 
@@ -42,7 +42,7 @@
         }
     }
 
-    public class MaximumModifier : Modifier, iValidator
+    public class MaximumModifier : Modifier, IValidator
     {
         public int Maximum { get; set; }
 
@@ -84,7 +84,7 @@
         }
     }
 
-    public class SliderModifier : Modifier, iValidator
+    public class SliderModifier : Modifier, IValidator
     {
         public int Minimum { get; set; }
         public int Maximum { get; set; }

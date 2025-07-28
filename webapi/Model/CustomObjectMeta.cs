@@ -7,12 +7,12 @@
         public bool IsHidden { get; private set; }
         public bool ExcludeExport { get; private set; }
 
-        public CustomObjectMeta(string GUID, string Project, bool IsHidden, bool ExcludeExport) 
+        public CustomObjectMeta(string guid, string project, bool isHidden, bool excludeExport) 
         {
-            this.GUID = GUID;
-            this.Project = Project;
-            this.IsHidden = IsHidden;
-            this.ExcludeExport = ExcludeExport;
+            this.GUID = guid;
+            this.Project = project;
+            this.IsHidden = isHidden;
+            this.ExcludeExport = excludeExport;
         }
     }
 }

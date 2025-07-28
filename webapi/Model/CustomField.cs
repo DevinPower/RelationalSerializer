@@ -21,16 +21,16 @@ namespace webapi.Model
         public List<Modifier> Modifiers { get; set; }
         public List<Modifier> AvailableModifiers { get; set; }
 
-        public CustomField(string Name, string UnderlyingType, bool IsArray) 
+        public CustomField(string name, string underlyingType, bool isArray) 
         {
-            this.Name = Name;
-            this.UnderlyingType = UnderlyingType;
-            this.IsArray = IsArray;
+            this.Name = name;
+            this.UnderlyingType = underlyingType;
+            this.IsArray = isArray;
 
             Modifiers = new List<Modifier>();
             AvailableModifiers = new List<Modifier>();
 
-            if (IsArray)
+            if (isArray)
             {
                 Value = new List<object>();
             }

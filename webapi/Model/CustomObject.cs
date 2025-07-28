@@ -22,30 +22,30 @@ namespace webapi.Model
             CustomFields = new List<CustomField>();
         }
 
-        public CustomObject(object BaseObject)
+        public CustomObject(object baseObject)
         {
             GUID = Guid.NewGuid().ToString();
             CustomFields = new List<CustomField>();
 
-            PropertyInfo[] properties = BaseObject.GetType().GetProperties();
+            PropertyInfo[] properties = baseObject.GetType().GetProperties();
             foreach (PropertyInfo property in properties)
             {
                 CustomField customField = new CustomField(property.Name, property.PropertyType.Name, false);
-                customField.Value = property.GetValue(BaseObject);
+                customField.Value = property.GetValue(baseObject);
                 customField.LoadDefaultEditor();
                 CustomFields.Add(customField);
             }
         }
 
-        public void SetField(string FieldName, object Value)
+        public void SetField(string fieldName, object value)
         {
-            CustomField customField = CustomFields.First(x => x.Name == FieldName);
-            customField.Value = Value;
+            CustomField customField = CustomFields.First(x => x.Name == fieldName);
+            customField.Value = value;
         }
 
-        public object GetField(string FieldName)
+        public object GetField(string fieldName)
         {
-            return CustomFields.First(x => x.Name == FieldName).Value;
+            return CustomFields.First(x => x.Name == fieldName).Value;
         }
 
         public CustomObject Copy()
