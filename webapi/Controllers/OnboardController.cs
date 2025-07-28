@@ -16,10 +16,10 @@ public class RepositoryIndexModel
     public int Id { get; set; }
     public string Name { get; set; }
 
-    public RepositoryIndexModel(int Id, string Name)
+    public RepositoryIndexModel(int id, string name)
     {
-        this.Id = Id;
-        this.Name = Name;
+        this.Id = id;
+        this.Name = name;
     }
 }
 
@@ -35,14 +35,14 @@ public class OnboardController : ControllerBase
     }
 
     [HttpPost, Route("/onboard/validate")]
-    public async Task<IActionResult> CheckAPIAccess([FromBody]string APIKey)
+    public async Task<IActionResult> CheckAPIAccess([FromBody]string apiKey)
     {
-        if (string.IsNullOrEmpty(APIKey))
+        if (string.IsNullOrEmpty(apiKey))
             return new BadRequestObjectResult($"APIKey cannot be empty.");
 
         try
         {
-            GithubManager githubManager = new GithubManager(APIKey);
+            GithubManager githubManager = new GithubManager(apiKey);
             var repositoryNames = await githubManager.GetRepositories();
 
             if (!repositoryNames.Any())
@@ -54,11 +54,11 @@ public class OnboardController : ControllerBase
         }
 
         //TODO: Refactor this
-        InstanceSettings.Singleton.GithubAPIKey = APIKey;
+        InstanceSettings.Singleton.GithubAPIKey = apiKey;
 
         ProjectObject SettingsProject = ProjectManager.projects.First(x => x.Name == "!Settings");
         CustomObject settingsObject = SettingsProject.CustomObjects[0];
-        settingsObject.SetField("GithubAPIKey", APIKey);
+        settingsObject.SetField("GithubAPIKey", apiKey);
         await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
         return new OkResult();
@@ -77,16 +77,16 @@ public class OnboardController : ControllerBase
     }
 
     [HttpPatch, Route("/onboard/repo")]
-    public async Task<IActionResult> SetWorkingRepository([FromBody]string RepoName)
+    public async Task<IActionResult> SetWorkingRepository([FromBody]string repoName)
     {
-        //TODO: Note that RepoName is {Owner}/{Repository}. We should break this up here before it reaches downstream.
+        //TODO: Note that repoName is {Owner}/{Repository}. We should break this up here before it reaches downstream.
 
         //TODO: Refactor this
-        InstanceSettings.Singleton.GithubRepository = RepoName;
+        InstanceSettings.Singleton.GithubRepository = repoName;
 
         ProjectObject SettingsProject = ProjectManager.projects.First(x => x.Name == "!Settings");
         CustomObject settingsObject = SettingsProject.CustomObjects[0];
-        settingsObject.SetField("GithubRepository", RepoName);
+        settingsObject.SetField("GithubRepository", repoName);
         await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
         return new OkResult();

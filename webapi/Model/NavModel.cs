@@ -6,11 +6,11 @@
         public string GUID { get; set; }
         public bool ExportExcluded { get; set; }
 
-        public NavModel(string Name, string GUID, bool ExportExcluded)
+        public NavModel(string name, string guid, bool exportExcluded)
         {
-            this.Name = Name;
-            this.GUID = GUID;
-            this.ExportExcluded = ExportExcluded;
+            this.Name = name;
+            this.GUID = guid;
+            this.ExportExcluded = exportExcluded;
         }
     }
 }

@@ -87,17 +87,17 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut, Route("/project/import")]
-    public async Task<IActionResult> ImportProject([FromBody]string Path)
+    public async Task<IActionResult> ImportProject([FromBody]string path)
     {
         List<Task> tasks = new List<Task>();
         ImportSource source = new GithubSource();
 
         source.Authenticate();
-        IActionResult returnedValue = await CreateProject(source.GetData(Path));
+        IActionResult returnedValue = await CreateProject(source.GetData(path));
 
         List<string> newProjects = ((OkObjectResult)returnedValue).Value as List<string>;
         foreach(string project in newProjects)
-            tasks.Add(DBProjects.InsertSourceAsync(project, "Github", Path));
+            tasks.Add(DBProjects.InsertSourceAsync(project, "Github", path));
 
         await Task.WhenAll(tasks);
 
@@ -150,12 +150,12 @@ public class ProjectController : ControllerBase
     }
 
     [HttpGet, Route("/project/importable")]
-    public async Task<IActionResult> GetImportable(string Path)
+    public async Task<IActionResult> GetImportable(string path)
     {
-        string Token = InstanceSettings.Singleton.GithubAPIKey;
-        string Owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
-        string Repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
+        string token = InstanceSettings.Singleton.GithubAPIKey;
+        string owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
+        string repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
 
-        return new OkObjectResult(await new GithubManager(Token).GetRepoFolders(Owner, Repo, Path));
+        return new OkObjectResult(await new GithubManager(token).GetRepoFolders(owner, repo, path));
     }
 }
