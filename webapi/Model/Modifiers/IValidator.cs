@@ -1,6 +1,6 @@
 ﻿namespace webapi.Model.Modifiers
 {
-    public interface iValidator
+    public interface IValidator
     {
         public bool Validate(CustomField field, object oldValue);
     }

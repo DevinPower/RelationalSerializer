@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace webapi.Model.Modifiers
 {
-    public class LengthModifier : Modifier, iValidator
+    public class LengthModifier : Modifier, IValidator
     {
         public int Length { get; set; }
 

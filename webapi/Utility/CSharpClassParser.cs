@@ -10,10 +10,10 @@ namespace webapi.Utility
         public string Name { get; private set; }
         public List<CustomField> CustomFields { get; private set; }
 
-        public ParsedClass(string Name, List<CustomField> CustomFields)
+        public ParsedClass(string name, List<CustomField> customFields)
         {
-            this.Name = Name;
-            this.CustomFields = CustomFields;
+            this.Name = name;
+            this.CustomFields = customFields;
         }
 
         CustomObject GetObjectTemplate()
@@ -59,7 +59,7 @@ namespace webapi.Utility
         }
     }
 
-    public class CSharpClassParser : iClassParser
+    public class CSharpClassParser : IClassParser
     {
         public List<ParsedClass> GetTemplateClasses(string sourceCode)
         {

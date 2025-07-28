@@ -32,9 +32,9 @@ namespace webapi
                 object oldValue = field.Value;
                 field.Value = Value;
 
-                foreach (Modifier modifier in field.Modifiers.Where(x => x is iValidator))
+                foreach (Modifier modifier in field.Modifiers.Where(x => x is IValidator))
                 {
-                    ((iValidator)modifier).Validate(field, oldValue);
+                    ((IValidator)modifier).Validate(field, oldValue);
                 }
 
                 await Clients.All.SendAsync("updateFieldFromOther", Field, field.Value);
