@@ -17,22 +17,46 @@
                         <span class="pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
                     </div>
                     <div class="flex-grow border-t border-gray-300" />
-                    <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                        <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
-                    </button>
                 </div>
 
-                <div v-for="(column, index) in field.value" :key="index" class="p-1">
 
-                    <button @click="removeFromArray(field.name, index)" style="float:right" type="button" class="rounded-full bg-red-600 p-1 text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                        <MinusIcon class="size-4" aria-hidden="true" />
-                    </button>
-
-                    <component :is="field.renderComponent" v-model="field.value[index]"
-                                :additionalData="field.additionalData"
-                                @update:model-value="updateField(project, id, field.name + '[' + index + ']', field.value[index])"
-                                style="margin-bottom:4px; width:calc(90% - 96px);margin-left:96px;" 
-                                :selfName="field.name + '[' + index + ']'"/>
+                <div class="px-0 sm:px-6 lg:px-0">
+                    <div class="mt-8 flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow-sm ring-1 ring-black/5 sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                <th scope="col" class="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">Value</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 text-right">Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr v-for="(column, index) in field.value" :key="index">
+                                <td class="py-4 w-full pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6">
+                                    <component :is="field.renderComponent" v-model="field.value[index]"
+                                        :additionalData="field.additionalData"
+                                        @update:model-value="updateField(project, id, field.name + '[' + index + ']', field.value[index])"
+                                        :selfName="field.name + '[' + index + ']'"/>
+                                </td>
+                                <td class="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6">
+                                    <span class="isolate inline-flex rounded-md shadow-xs">
+                                        <button @click="removeFromArray(field.name, index)" type="button" class="relative inline-flex items-center rounded-md bg-red-200 px-3 py-2 text-sm font-semibold text-white-900 ring-1 ring-red-300 ring-inset hover:bg-red-500 focus:z-10"><MinusIcon class="size-4" aria-hidden="true" /></button>
+                                    </span>
+                                </td>
+                                </tr>
+                                <tr>
+                                    <td @click="field.value.push(null)" class="bg-gray-200 hover:bg-gray-300 p-2 text-gray-500" colspan="2" style="cursor: pointer;">
+                                        <center><PlusIcon class="size-6" aria-hidden="true" /></center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
 
             </div>
@@ -106,12 +130,17 @@
             connection.on('removeFromArrayFromOther', (fieldname, index) => {
                 this.removeFromArrayFromOther(fieldname, index);
             });
-            //
 
-            this.fetchData(this.project, this.id);
+            if (this.$route.params.project && this.$route.params.id)
+                this.fetchData(this.$route.params.project, this.$route.params.id);
         },
         watch: {
             '$route.params.id': function () { 
+                if (this.$route.params.id == 'undefined'){
+                    this.post = null;
+                    return;
+                }
+
                 this.fetchData(this.$route.params.project, this.$route.params.id);
             }
         },

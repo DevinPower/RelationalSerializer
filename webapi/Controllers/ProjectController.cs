@@ -156,6 +156,6 @@ public class ProjectController : ControllerBase
         string owner = InstanceSettings.Singleton.GithubRepository.Split('/')[0];
         string repo = InstanceSettings.Singleton.GithubRepository.Split('/')[1];
 
-        return new OkObjectResult(await new GithubManager(token).GetRepoFolders(owner, repo, path));
+        return Ok(await new GithubManager(token).GetRepoFolders(owner, repo, path));
     }
 }

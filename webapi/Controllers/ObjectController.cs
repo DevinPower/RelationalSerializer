@@ -35,7 +35,7 @@ public class ObjectController : ControllerBase
 
         ProjectManager.projects[project].CustomObjects.Add(customObject);
         await DBProjects.UpsertObjectAsync(customObject, ProjectManager.projects[project].GUID);
-        return new OkObjectResult(new NavModel(customObject.GetDisplayName(), customObject.GUID, customObject.ExcludeExport));
+        return Ok(new NavModel(customObject.GetDisplayName(), customObject.GUID, customObject.ExcludeExport));
     }
 
     [HttpDelete, Route("/object/{project:int}/{guid}/delete")]
@@ -48,8 +48,10 @@ public class ObjectController : ControllerBase
     [HttpGet, Route("/object/{project:int}/{guid}/name")]
     public async Task<IActionResult> GetObjectName(int project, string guid)
     {
-        CustomObject customObject = ProjectManager.projects[project].CustomObjects.First(x => x.GUID == guid);
-        return new OkObjectResult(customObject.GetDisplayName());
+        CustomObject customObject = ProjectManager.projects[project].CustomObjects.FirstOrDefault(x => x.GUID == guid, null);
+        if (customObject == null)
+            return Ok("null");
+        return Ok(customObject.GetDisplayName());
     }
 
     [HttpPatch, Route("/object/{project:int}/{guid}/exporttoggle")]

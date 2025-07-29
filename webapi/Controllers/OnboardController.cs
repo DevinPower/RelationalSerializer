@@ -61,7 +61,7 @@ public class OnboardController : ControllerBase
         settingsObject.SetField("GithubAPIKey", apiKey);
         await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
-        return new OkResult();
+        return Ok();
     }
 
     [HttpGet, Route("/onboard/listrepositories")]
@@ -69,7 +69,7 @@ public class OnboardController : ControllerBase
     {
         GithubManager githubManager = new GithubManager(InstanceSettings.Singleton.GithubAPIKey);
         int id = 1;
-        return new OkObjectResult((await githubManager.GetRepositories())
+        return Ok((await githubManager.GetRepositories())
             .Select(x =>
         {
             return new RepositoryIndexModel(id++, x);
@@ -89,12 +89,12 @@ public class OnboardController : ControllerBase
         settingsObject.SetField("GithubRepository", repoName);
         await DBProjects.UpsertObjectAsync(settingsObject, SettingsProject.GUID);
 
-        return new OkResult();
+        return Ok();
     }
 
     [HttpGet, Route("/onboard")]
     public IActionResult NeedsOnboarding()
     {
-        return new OkObjectResult(string.IsNullOrEmpty(InstanceSettings.Singleton.GithubRepository));
+        return Ok(string.IsNullOrEmpty(InstanceSettings.Singleton.GithubRepository));
     }
 }
