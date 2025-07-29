@@ -12,16 +12,14 @@
             </div>
 
             <div v-else class="mt-2">
-                <div class="relative">
-                    <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                        <div class="w-full border-t border-gray-300" />
-                    </div>
+                <div class="flex items-center my-4">
                     <div class="relative flex items-center justify-between">
-                        <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
-                        <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                            <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
-                        </button>
+                        <span class="pr-3 text-base font-semibold text-gray-900">{{ field.name }}</span>
                     </div>
+                    <div class="flex-grow border-t border-gray-300" />
+                    <button @click="field.value.push(null)" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                        <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
+                    </button>
                 </div>
 
                 <div v-for="(column, index) in field.value" :key="index" class="p-1">

@@ -45,6 +45,13 @@ public class ObjectController : ControllerBase
         return Ok();
     }
 
+    [HttpGet, Route("/object/{project:int}/{guid}/name")]
+    public async Task<IActionResult> GetObjectName(int project, string guid)
+    {
+        CustomObject customObject = ProjectManager.projects[project].CustomObjects.First(x => x.GUID == guid);
+        return new OkObjectResult(customObject.GetDisplayName());
+    }
+
     [HttpPatch, Route("/object/{project:int}/{guid}/exporttoggle")]
     public async Task<IActionResult> SetExportSetting(int project, string guid)
     {

@@ -1,7 +1,7 @@
 ﻿<template>
     <input @click="promptReference(additionalData.referenceCategory)" :value="modelValue" 
-    type="text" style="cursor:pointer;" readonly placeholder="null"  />
-
+        type="text" style="cursor:pointer;" readonly placeholder="null"  />
+{{ referenceObjectName }}
     <ReferenceModal v-if="referencePrompt"
                        :Header="referencePrompt.header"
                        :project="referencePrompt.project"
@@ -20,13 +20,15 @@
         data() {
             return {
                 referenceOptions: [],
-                referencePrompt: null
+                referencePrompt: null,
+                referenceObjectName: ''
             };
         },
         components: {
             ReferenceModal
         },
         created() {
+            this.getSelectedName(this.modelValue);
         },
         watch: {
         },
@@ -38,11 +40,12 @@
                 this.referencePrompt = {
                     header: "Pick an object to link.",
                     project: assignProject,
-                    confirmCallback: function (guid) {
+                    confirmCallback: (guid) => {
                         thisRef.referencePrompt = null;
                         thisRef.$emit('update:modelValue', guid);
+                        this.getSelectedName(guid);
                     },
-                    cancelCallback: function () {
+                    cancelCallback: () => {
                         thisRef.referencePrompt = null;
                     }
                 }
@@ -54,7 +57,14 @@
                         this.referenceOptions = json;
                         return;
                     });
-            }
+            },
+            getSelectedName(nameGuid){
+                fetch('/api/object/' + this.additionalData.referenceCategory + '/' + nameGuid + '/name')
+                    .then(r => r.text().then(textName =>{
+                            this.referenceObjectName = textName;
+                        }
+                    ))
+            },
         },
     });
 </script>

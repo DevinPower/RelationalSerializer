@@ -1,21 +1,17 @@
 <template>
     <div class="post fixed top-0">        
-        <div style="height:16px;" />
 
-        <div class="relative">
-            <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-gray-300" />
-            </div>
+
+        <div class="flex items-center my-4">
             <div class="relative flex items-center justify-between">
                 <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
-                <button @click="makeObject()" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                    <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
-                    <span>Compose</span>
-                </button>
             </div>
+            <div class="flex-grow border-t border-gray-300" />
+            <button @click="makeObject()" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
+                <span>Compose</span>
+            </button>
         </div>
-
-        <div style="height:16px;" />
 
         <div class="flex flex-1 w-full justify-center px-2">
             <div class="grid w-full grid-cols-1">
