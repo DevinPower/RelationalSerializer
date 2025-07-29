@@ -45,13 +45,13 @@ BEGIN
 	delete from [dbo].[ProjectObjectTemplatePairs] where project_guid = @target
 
 	declare @templateGUID nvarchar(36)
-	select @templateguid=OBJECT_GUID from [db_a9769a_rs].[dbo].[ProjectObjectTemplatePairs] where project_guid = @target
+	select @templateguid=OBJECT_GUID from [dbo].[ProjectObjectTemplatePairs] where project_guid = @target
 
 	delete from [dbo].[ProjectObjectTemplatePairs] where project_guid = @target
 
 	delete from [dbo].[TemplateModData] where guid = @templateGUID
 
-	delete from [dbo].[CustomObjects] where GUID in (select guid from [db_a9769a_rs].[dbo].[CustomObjectMeta] where project = @target)
+	delete from [dbo].[CustomObjects] where GUID in (select guid from [dbo].[CustomObjectMeta] where project = @target)
 	delete from [dbo].[CustomObjectMeta] where project = @target
 END
 GO
