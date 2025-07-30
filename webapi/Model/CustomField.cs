@@ -3,6 +3,9 @@ using webapi.Utility;
 
 namespace webapi.Model
 {
+    //TODO: The only thing different between a CustomField on objectA and a CustomField
+    //      on objectB is the Value. We're creating a ton of overhead by including
+    //      all these properties.
     public class CustomField
     {
         public string Name { get; set; }

@@ -17,11 +17,11 @@ public class ObjectController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet, Route("/object/{project:int}/{id}")]
-    public IActionResult GetObject(int project, string id)
+    [HttpGet, Route("/object/{project:int}/{guid}")]
+    public IActionResult GetObject(int project, string guid)
     {
         CustomObject requestedObject = ProjectManager.projects[project].CustomObjects
-                    .First(x => x.GUID == id);
+                    .First(x => x.GUID == guid);
         RenderObject renderObject = new RenderObject(requestedObject);
 
         return Ok(renderObject);
@@ -71,7 +71,7 @@ public class ObjectController : ControllerBase
 
     //TODO: Too much logic in the actual endpoint
     [HttpPatch, Route("/object/{project:int}/template")]
-    public IActionResult SetTemplate(int project, int templateNumber, [FromBody] List<JObject> modifierDynamic)
+    public async Task<IActionResult> SetTemplate(int project, int templateNumber, [FromBody] List<JObject> modifierDynamic)
     {
         CustomObject customObject = ProjectManager.projects[project].Templates[0];
         foreach (CustomField customField in customObject.CustomFields)
@@ -87,7 +87,7 @@ public class ObjectController : ControllerBase
             for (int i = 0; i < customField.Modifiers.Count; i++)
             {
                 Modifier internalActive = customField.Modifiers[i];
-                if (activeModifiers.Count(x => ((JObject)x)["name"].Value<string>() == internalActive.Name) > 0)
+                if (activeModifiers.Count(x => ((JObject)x)["name"].Value<string>() == internalActive.Name) == 0)
                 {
                     internalActive.OnRemove(customObject, customField);
                     customField.Modifiers.Remove(internalActive);
@@ -96,7 +96,7 @@ public class ObjectController : ControllerBase
                 }
                 else
                 {
-                    var dictionary = activeModifiers[internalActive.Name].ToObject<Dictionary<string, object>>();
+                    //var dictionary = activeModifiers[internalActive.Name].ToObject<Dictionary<string, object>>();
                     //internalActive.BuildModifierFromUnderlyingObject(
                     //    activeModifiers[internalActive.Name].UnderlyingObject);
                 }
@@ -139,7 +139,18 @@ public class ObjectController : ControllerBase
             }
         }
 
-        DBProjects.UpsertModsAsync(customObject);
+        await DBProjects.UpsertModsAsync(customObject);
+
+        //TODO: This is a hacky way to handle modifiers changing before refactoring customFields
+        foreach (var projectCustom in ProjectManager.projects[project].CustomObjects)
+        {
+            foreach (var field in projectCustom.CustomFields)
+            {
+                field.Modifiers = customObject.CustomFields
+                    .First((x) => x.Name == field.Name).Modifiers;
+            }
+
+        }
 
         return Ok();
     }
