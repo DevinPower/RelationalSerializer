@@ -41,6 +41,7 @@ namespace webapi
             }
             else
             {
+                //TODO: Abstract array inserts
                 IEnumerable<object> valueArray = (IEnumerable<object>)fieldObject.Value;
                 List<object> valueList = valueArray.ToList();
                 while (valueList.Count <= arrayIndex)

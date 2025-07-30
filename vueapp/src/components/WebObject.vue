@@ -131,11 +131,21 @@
                 this.removeFromArrayFromOther(fieldname, index);
             });
 
-            if (this.$route.params.project && this.$route.params.id)
+            if (this.isInline){
+                this.fetchData(this.project, this.id);
+                return;
+            }
+
+            if (this.$route.params.project 
+                && this.$route.params.id
+                && this.$route.params.id != 'undefined')
                 this.fetchData(this.$route.params.project, this.$route.params.id);
         },
         watch: {
             '$route.params.id': function () { 
+                if (this.isInline)
+                    return;
+                
                 if (this.$route.params.id == 'undefined'){
                     this.post = null;
                     return;

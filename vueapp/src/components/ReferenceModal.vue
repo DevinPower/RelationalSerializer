@@ -20,7 +20,10 @@
                     <nav class="flex flex-1 flex-col" aria-label="Sidebar">
                         <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in Options" :key="item.guid">
-                            <a v-if="item.name.toUpperCase().includes(searchText.toUpperCase())" @click="$emit('confirm', item.guid)" href="#" :class="['text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 pl-3 text-sm/6 font-semibold']">{{ item.name }}</a>
+                            <a v-if="item.name.toUpperCase().includes(searchText.toUpperCase())" 
+                            @click="$emit('confirm', item.guid)" 
+                            style="cursor: pointer;"
+                            :class="['text-gray-700 hover:bg-gray-50 hover:text-indigo-600', 'group flex gap-x-3 rounded-md p-2 pl-3 text-sm/6 font-semibold']">{{ item.name }}</a>
                         </li>
                         </ul>
                     </nav>

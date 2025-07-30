@@ -15,10 +15,10 @@ builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "LocalCors",
-                builder =>
-                {
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).IsLoopback);
-                });
+        builder =>
+        {
+            builder.SetIsOriginAllowed(origin => new Uri(origin).IsLoopback);
+        });
 });
 
 var app = builder.Build();
@@ -33,8 +33,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("LocalCors");
 
-webapi.Bootup.Run(builder.Configuration);
-
+try
+{
+    await webapi.Bootup.Run(builder.Configuration);
+}
+catch(Exception ex)
+{
+    Console.WriteLine($"Error on startup. {ex.Message}");
+}
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();

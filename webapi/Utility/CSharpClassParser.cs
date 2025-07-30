@@ -166,7 +166,9 @@ namespace webapi.Utility
                 .ToList();
 
             List<CustomField> changedFields = oldObject.CustomFields
-                .Where(x => newObject.CustomFields.Count(y => y.Name == x.Name && y.UnderlyingType != x.UnderlyingType) > 0)
+                .Where(x => newObject.CustomFields.Count(y => y.Name == x.Name && 
+                (y.UnderlyingType != x.UnderlyingType
+                 || y.IsArray != x.IsArray)) > 0)
                 .ToList();
 
             foreach (CustomField field in removedFields)
@@ -176,9 +178,10 @@ namespace webapi.Utility
                 project.AddField(field);
 
             foreach (CustomField field in changedFields)
-                project.ModifyType(field.Name, newObject.CustomFields.First(x => x.Name == field.Name).UnderlyingType);
-
-            //probably need to update whether or not it's an array as well
+            {
+                CustomField matchedField = newObject.CustomFields.First(x => x.Name == field.Name);
+                project.ModifyType(field.Name, matchedField.UnderlyingType, matchedField.IsArray);
+            }
         }
     }
 }

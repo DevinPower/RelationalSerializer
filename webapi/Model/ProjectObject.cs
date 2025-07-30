@@ -1,4 +1,5 @@
 ﻿using Azure.Core.GeoJson;
+using Newtonsoft.Json.Linq;
 using System.Text;
 using webapi.DAL;
 
@@ -73,13 +74,22 @@ namespace webapi.Model
             await Task.WhenAll(tasks);
         }
 
-        public async Task ModifyType(string FieldName, string NewType)
+        public async Task ModifyType(string FieldName, string NewType, bool isArray)
         {
             List<Task> tasks = new List<Task>();
 
             CustomObjects.ForEach(x => {
                 CustomField field = x.CustomFields.First(y => y.Name == FieldName);
                 field.UnderlyingType = NewType;
+                object oldValue = field.Value;
+                field.IsArray = isArray;
+
+                //TODO: Abstract array inserts
+                IEnumerable<object> valueArray = (IEnumerable<object>)field.Value;
+                List<object> valueList = valueArray.ToList();
+                valueList.Add(oldValue);
+                field.Value = valueList;
+
                 tasks.Add(DBProjects.UpsertFieldAsync(field, x.GUID));
             });
 
@@ -87,6 +97,7 @@ namespace webapi.Model
             {
                 CustomField field = x.CustomFields.First(y => y.Name == FieldName);
                 field.UnderlyingType = NewType;
+                field.IsArray = isArray;
                 tasks.Add(DBProjects.UpsertFieldAsync(field, x.GUID));
             });
 

@@ -1,10 +1,11 @@
 ﻿<template>
-    <div>
-        <div v-if="modelValue">
+    <div class="w-full">
+        <button @click="fullScreen()">Fullscreen</button>
+        <div v-if="modelValue" class="w-full">
             <WebObject
-            :id="modelValue"
-            :project="additionalData.referenceCategory"
-            isInline="true"></WebObject>
+                :id="modelValue"
+                :project="additionalData.referenceCategory"
+                isInline="true"></WebObject>
         </div>
         <div v-else>
             <button @click="instantiate()">Instantiate</button>
@@ -32,6 +33,9 @@
         methods: {
             instantiate(){
                 this.$parent.instantiateInlineReference(this.selfName);
+            },
+            fullScreen(){
+                this.$router.push(`/edit/${this.additionalData.referenceCategory}/${this.modelValue}`);
             }
         },
     });

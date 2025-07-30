@@ -9,6 +9,7 @@
 
         public override void OnApply(CustomObject owner, CustomField field)
         {
+            throw new NotImplementedException("ReadOnly modifier not implemented");
         }
 
         public override void OnRemove(CustomObject owner, CustomField field)
