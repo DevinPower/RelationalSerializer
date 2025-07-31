@@ -40,11 +40,11 @@ namespace webapi.Model.Modifiers
             field.AdditionalData = new { Enum = _Enum };
         }
 
-        CustomEnum GetEnum()
+        async Task<CustomEnum> GetEnum()
         {
             if (_Enum != null)
                 return _Enum;
-            _Enum = DBProjects.GetEnum(EnumName);
+            _Enum = await DBProjects.GetEnumAsync(EnumName);
             return _Enum;
         }
     }

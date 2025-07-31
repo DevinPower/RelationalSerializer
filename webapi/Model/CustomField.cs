@@ -3,6 +3,9 @@ using webapi.Utility;
 
 namespace webapi.Model
 {
+    //TODO: The only thing different between a CustomField on objectA and a CustomField
+    //      on objectB is the Value. We're creating a ton of overhead by including
+    //      all these properties.
     public class CustomField
     {
         public string Name { get; set; }
@@ -21,16 +24,16 @@ namespace webapi.Model
         public List<Modifier> Modifiers { get; set; }
         public List<Modifier> AvailableModifiers { get; set; }
 
-        public CustomField(string Name, string UnderlyingType, bool IsArray) 
+        public CustomField(string name, string underlyingType, bool isArray) 
         {
-            this.Name = Name;
-            this.UnderlyingType = UnderlyingType;
-            this.IsArray = IsArray;
+            this.Name = name;
+            this.UnderlyingType = underlyingType;
+            this.IsArray = isArray;
 
             Modifiers = new List<Modifier>();
             AvailableModifiers = new List<Modifier>();
 
-            if (IsArray)
+            if (isArray)
             {
                 Value = new List<object>();
             }

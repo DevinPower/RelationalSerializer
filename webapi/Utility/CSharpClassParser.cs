@@ -10,10 +10,10 @@ namespace webapi.Utility
         public string Name { get; private set; }
         public List<CustomField> CustomFields { get; private set; }
 
-        public ParsedClass(string Name, List<CustomField> CustomFields)
+        public ParsedClass(string name, List<CustomField> customFields)
         {
-            this.Name = Name;
-            this.CustomFields = CustomFields;
+            this.Name = name;
+            this.CustomFields = customFields;
         }
 
         CustomObject GetObjectTemplate()
@@ -34,22 +34,20 @@ namespace webapi.Utility
                 }
             });
 
-
-
             return objectTemplate;
         }
 
-        public void AddAsNewProject()
+        public async Task AddAsNewProject()
         {
             CustomObject objectTemplate = GetObjectTemplate();
 
             List<CustomObject> templates = new List<CustomObject>() { objectTemplate };
 
             ProjectObject newProject = new ProjectObject(this.Name, templates);
-            DBProjects.CreateProject(newProject);
+            await DBProjects.CreateProjectAsync(newProject);
 
             ProjectManager.AddProject(newProject);
-            DBProjects.UpsertMods(objectTemplate);
+            await DBProjects.UpsertModsAsync(objectTemplate);
         }
 
         public void LoadIntoExistingProject(ProjectObject existingProject)
@@ -61,7 +59,7 @@ namespace webapi.Utility
         }
     }
 
-    public class CSharpClassParser : iClassParser
+    public class CSharpClassParser : IClassParser
     {
         public List<ParsedClass> GetTemplateClasses(string sourceCode)
         {
@@ -93,7 +91,7 @@ namespace webapi.Utility
                             customEnum.AddValue(ms.Identifier.ToString(), i++);
                         }
                     }
-                    DBProjects.InsertEnum(customEnum);
+                    DBProjects.InsertEnumAsync(customEnum);
                 }
 
                 PropertyDeclarationSyntax[] properties = readClass.DescendantNodes()
@@ -133,7 +131,7 @@ namespace webapi.Utility
 
                     CustomField newField;
 
-                    if (TypeUtilities.IsEnum(fieldType))
+                    if (TypeUtilities.IsEnum(fieldType).Result)
                     {
                         newField = new CustomField(propertyName, "enum", isArray);
                         newField.Modifiers.Add(new Model.Modifiers.ChoiceModifier() { EnumName = fieldType });
@@ -142,11 +140,6 @@ namespace webapi.Utility
                     {
                         newField = new CustomField(propertyName, fieldType, isArray);
                     }
-
-                    //else if (ConvertedClass.generics.Where(x => (x.name == tS)).Count() == 0)
-                    //{
-                    //    cc.addField(identifierNames[i], "reference", isList, tS);
-                    //}
 
                     parsedFields.Add(newField);
                 }
@@ -173,7 +166,9 @@ namespace webapi.Utility
                 .ToList();
 
             List<CustomField> changedFields = oldObject.CustomFields
-                .Where(x => newObject.CustomFields.Count(y => y.Name == x.Name && y.UnderlyingType != x.UnderlyingType) > 0)
+                .Where(x => newObject.CustomFields.Count(y => y.Name == x.Name && 
+                (y.UnderlyingType != x.UnderlyingType
+                 || y.IsArray != x.IsArray)) > 0)
                 .ToList();
 
             foreach (CustomField field in removedFields)
@@ -183,9 +178,10 @@ namespace webapi.Utility
                 project.AddField(field);
 
             foreach (CustomField field in changedFields)
-                project.ModifyType(field.Name, newObject.CustomFields.First(x => x.Name == field.Name).UnderlyingType);
-
-            //probably need to update whether or not it's an array as well
+            {
+                CustomField matchedField = newObject.CustomFields.First(x => x.Name == field.Name);
+                project.ModifyType(field.Name, matchedField.UnderlyingType, matchedField.IsArray);
+            }
         }
     }
 }

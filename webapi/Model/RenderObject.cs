@@ -12,12 +12,12 @@ namespace webapi.Model
         public string RenderComponent { get; set; }
         public object AdditionalData { get; set; }
 
-        public RenderField(string Name, object Value, string RenderComponent, bool IsArray)
+        public RenderField(string name, object value, string renderComponent, bool isArray)
         {
-            this.Name = Name;
-            this.Value = Value;
-            this.RenderComponent = RenderComponent;
-            this.IsArray = IsArray;
+            this.Name = name;
+            this.Value = value;
+            this.RenderComponent = renderComponent;
+            this.IsArray = isArray;
         }
     }
 
@@ -25,12 +25,12 @@ namespace webapi.Model
     {
         public List<Modifier> AvailableModifiers { get; set; }
         public List<Modifier> ActiveModifiers { get; set; }
-        public RenderModifierField(string Name, object Value, string RenderComponent, bool IsArray, List<Modifier> availableModifiers, List<Modifier> activeModifiers) : base(Name, Value, RenderComponent, IsArray)
+        public RenderModifierField(string name, object value, string renderComponent, bool isArray, List<Modifier> availableModifiers, List<Modifier> activeModifiers) : base(name, value, renderComponent, isArray)
         {
-            this.Name = Name;
-            this.Value = Value;
-            this.RenderComponent = RenderComponent;
-            this.IsArray = IsArray;
+            this.Name = name;
+            this.Value = value;
+            this.RenderComponent = renderComponent;
+            this.IsArray = isArray;
 
             AvailableModifiers = availableModifiers;
             foreach(Modifier m in availableModifiers)

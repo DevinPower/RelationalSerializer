@@ -65,7 +65,7 @@ namespace webapi.Model.Modifiers
                 object convertedObject = Convert.ChangeType(fromObject[field], propertyType);
                 property.SetValue(this, convertedObject);
 
-                UnderlyingObject.Properties.Where(x => x.Name == field).First().Value = convertedObject;
+                UnderlyingObject.Properties.First(x => x.Name == field).Value = convertedObject;
             }
         }
     }

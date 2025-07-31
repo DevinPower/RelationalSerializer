@@ -8,16 +8,16 @@ namespace webapi.Model
         public List<RenderObject> ActiveModifiers { get; set; }
         public List<RenderObject> AvailableModifiers { get; set; }
 
-        public TemplateModifierModel(string FieldName, List<Modifier> ActiveModifiers, List<Modifier> AvailableModifiers)
+        public TemplateModifierModel(string fieldName, List<Modifier> activeModifiers, List<Modifier> availableModifiers)
         {
-            this.FieldName = FieldName;
-            if (ActiveModifiers == null)
+            this.FieldName = fieldName;
+            if (activeModifiers == null)
             {
-                ActiveModifiers = new List<Modifier>();
+                this.ActiveModifiers = new List<RenderObject>();
             }
             else
             {
-                this.ActiveModifiers = ActiveModifiers.Select(x =>
+                this.ActiveModifiers = activeModifiers.Select(x =>
                 {
                     RenderObject JITObject = new RenderObject(new CustomObject(x));
                     JITObject.DisplayName = x.GetType().Name;
@@ -25,7 +25,7 @@ namespace webapi.Model
                 }).ToList();
             }
 
-            this.AvailableModifiers = AvailableModifiers.Select(x => {
+            this.AvailableModifiers = availableModifiers.Select(x => {
                     RenderObject JITObject = new RenderObject(new CustomObject(x));
                     JITObject.DisplayName = x.GetType().Name;
                     return JITObject;
@@ -45,7 +45,7 @@ namespace webapi.Model
                 Modifier underlyingModifier = (Modifier)Activator.CreateInstance(type);
                 foreach (var property in type.GetProperties())
                 {
-                    var value = renderObject.Properties.Where(x => x.Name == property.Name).First().Value;
+                    var value = renderObject.Properties.First(x => x.Name == property.Name).Value;
                     property.SetValue(underlyingModifier, value);
                 }
 

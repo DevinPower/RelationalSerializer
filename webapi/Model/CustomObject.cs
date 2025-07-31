@@ -22,30 +22,30 @@ namespace webapi.Model
             CustomFields = new List<CustomField>();
         }
 
-        public CustomObject(object BaseObject)
+        public CustomObject(object baseObject)
         {
             GUID = Guid.NewGuid().ToString();
             CustomFields = new List<CustomField>();
 
-            PropertyInfo[] properties = BaseObject.GetType().GetProperties();
+            PropertyInfo[] properties = baseObject.GetType().GetProperties();
             foreach (PropertyInfo property in properties)
             {
                 CustomField customField = new CustomField(property.Name, property.PropertyType.Name, false);
-                customField.Value = property.GetValue(BaseObject);
+                customField.Value = property.GetValue(baseObject);
                 customField.LoadDefaultEditor();
                 CustomFields.Add(customField);
             }
         }
 
-        public void SetField(string FieldName, object Value)
+        public void SetField(string fieldName, object value)
         {
-            CustomField customField = CustomFields.Where(x => x.Name == FieldName).First();
-            customField.Value = Value;
+            CustomField customField = CustomFields.First(x => x.Name == fieldName);
+            customField.Value = value;
         }
 
-        public object GetField(string FieldName)
+        public object GetField(string fieldName)
         {
-            return CustomFields.Where(x => x.Name == FieldName).First().Value;
+            return CustomFields.First(x => x.Name == fieldName).Value;
         }
 
         public CustomObject Copy()
@@ -107,6 +107,8 @@ namespace webapi.Model
             else
             {
                 builder.Append($"\"$id\": \"{GUID}\",");
+                resolvedGUIDs.Add(GUID);
+
                 foreach (CustomField customField in CustomFields)
                 {
                     string serialValue = "";
@@ -160,7 +162,6 @@ namespace webapi.Model
                     if (customField != CustomFields.Last())
                         builder.Append(',');
                 }
-                resolvedGUIDs.Add(GUID);
             }
             builder.Append("}");
 
@@ -173,7 +174,7 @@ namespace webapi.Model
             PropertyInfo[] properties = newObject.GetType().GetProperties();
             foreach (PropertyInfo property in properties)
             {
-                CustomField customField = CustomFields.Where(x => x.Name == property.Name).First();
+                CustomField customField = CustomFields.First(x => x.Name == property.Name);
                 property.SetValue(newObject, customField.Value);
             }
             return newObject;

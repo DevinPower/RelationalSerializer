@@ -6,21 +6,21 @@ namespace webapi
 {
     public class Bootup
     {
-        public static void Run(ConfigurationManager configuration)
+        public static async Task Run(ConfigurationManager configuration)
         {
             ProjectManager.projects = new List<ProjectObject>();
             Settings.ConnectionString = configuration["ConnectionString"];
 
-            LoadProjects();
-            List<string> templateGUIDs = LoadTemplates();
-            LoadObjects(templateGUIDs);
+            await LoadProjects();
+            List<string> templateGUIDs = await LoadTemplates();
+            await LoadObjects(templateGUIDs);
             ApplyTemplateModifiersToObjects();
             LoadSettings();
         }
 
-        static void LoadProjects()
+        static async Task LoadProjects()
         {
-            List<(string guid, string name)> projects = DBProjects.GetProjects();
+            List<(string guid, string name)> projects = await DBProjects.GetProjectsAsync();
             foreach((string guid, string name) project in projects)
             {
                 ProjectObject projectObject = new ProjectObject(project.name, project.guid);
@@ -28,12 +28,12 @@ namespace webapi
             }
         }
 
-        static List<string> LoadTemplates()
+        static async Task<List<string>> LoadTemplates()
         {
-            List<(string ProjectGUID, string ObjectGuid)> templates = DBProjects.GetTemplates();
+            List<(string ProjectGUID, string ObjectGuid)> templates = await DBProjects.GetTemplatesAsync();
             foreach((string ProjectGUID, string ObjectGuid) template in templates)
             {
-                CustomObject customObject = DBProjects.GetTemplateModObjects(template.ObjectGuid);
+                CustomObject customObject = await DBProjects.GetTemplateModObjectsAsync(template.ObjectGuid);
 
                 foreach(CustomField field in customObject.CustomFields)
                 {
@@ -44,24 +44,24 @@ namespace webapi
                     }
                 }
 
-                ProjectManager.projects.Where(x => x.GUID == template.ProjectGUID).First().Templates.Add(customObject);
+                ProjectManager.projects.First(x => x.GUID == template.ProjectGUID).Templates.Add(customObject);
             }
 
             return templates.Select(x => x.ObjectGuid).ToList();
         }
 
-        static void LoadObjects(List<string> filter)
+        static async Task LoadObjects(List<string> filter)
         {
-            List<CustomObjectMeta> values = DBProjects.GetObjectGUIDsByProject();
+            List<CustomObjectMeta> values = await DBProjects.GetObjectGUIDsByProjectAsync();
             foreach(var meta in values)
             {
                 if (filter.Contains(meta.GUID))
                     continue;
-                CustomObject customObject = DBProjects.GetObject(meta.GUID);
+                CustomObject customObject = await DBProjects.GetObjectAsync(meta.GUID);
                 customObject.HiddenFromNav = meta.IsHidden;
                 customObject.ExcludeExport = meta.ExcludeExport;
 
-                ProjectManager.projects.Where(x => x.GUID == meta.Project).First().CustomObjects.Add(customObject);
+                ProjectManager.projects.First(x => x.GUID == meta.Project).CustomObjects.Add(customObject);
             }
         }
 
@@ -77,7 +77,7 @@ namespace webapi
                     {
                         field.Modifiers = new List<Model.Modifiers.Modifier>();
                         field.Modifiers.AddRange(templateObject.CustomFields
-                                                       .Where(x => x.Name == field.Name).First().Modifiers);
+                                                       .First(x => x.Name == field.Name).Modifiers);
                         field.Modifiers.ForEach(x => x.OnApply(customObject, field));
                     }
                 }
@@ -89,7 +89,7 @@ namespace webapi
             if (ProjectManager.projects.Where(x => x.Name == "!Settings").Count() == 0)
                 CreateSettings();
 
-            ProjectObject settingsProject = ProjectManager.projects.Where(x => x.Name == "!Settings").First();
+            ProjectObject settingsProject = ProjectManager.projects.First(x => x.Name == "!Settings");
 
             if (settingsProject.CustomObjects.Count == 0)
                 CreateSettingsObject(settingsProject);
@@ -102,14 +102,14 @@ namespace webapi
             CustomObject settingsObject = new CustomObject(new InstanceSettings());
             ProjectObject settingsProject = new ProjectObject("!Settings", new List<CustomObject>() { settingsObject });
             ProjectManager.AddProject(settingsProject);
-            DBProjects.CreateProject(settingsProject);
+            DBProjects.CreateProjectAsync(settingsProject);
         }
 
         static void CreateSettingsObject(ProjectObject SettingsProject)
         {
             CustomObject settingsObject = SettingsProject.Templates.First().Copy();
             SettingsProject.AddObject(settingsObject);
-            DBProjects.UpsertObject(settingsObject.Copy(), SettingsProject.GUID);
+            DBProjects.UpsertObjectAsync(settingsObject.Copy(), SettingsProject.GUID);
         }
     }
 }

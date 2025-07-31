@@ -1,5 +1,9 @@
 # RelationalSerializer
 
+<p align="center">
+  <img src="vueapp/src/assets/favicon-32x32.png" />
+</p>
+
 ## Example
 
 ![Example screenshot showing data](Example.png)

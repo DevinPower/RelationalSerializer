@@ -5,10 +5,10 @@
         public string Name { get; set; }
         public int Value { get; set; }
 
-        public ValuePairs(string Name, int Value)
+        public ValuePairs(string name, int value)
         {
-            this.Name = Name;
-            this.Value = Value;
+            this.Name = name;
+            this.Value = value;
         }
     }
 
@@ -17,15 +17,15 @@
         public string Name { get; set; }
         public List<ValuePairs> Values { get; set; }
 
-        public CustomEnum(string Name)
+        public CustomEnum(string name)
         {
-            this.Name = Name;
+            this.Name = name;
             Values = new List<ValuePairs>();
         }
 
-        public void AddValue(string Name, int Value)
+        public void AddValue(string name, int value)
         {
-            Values.Add(new ValuePairs(Name, Value));
+            Values.Add(new ValuePairs(name, value));
         }
     }
 }

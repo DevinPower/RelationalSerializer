@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace webapi.Model.Modifiers
 {
-    public class LengthModifier : Modifier, iValidator
+    public class LengthModifier : Modifier, IValidator
     {
         public int Length { get; set; }
 
@@ -60,6 +60,27 @@ namespace webapi.Model.Modifiers
         {
             field.RenderComponent = "FC_Code";
             field.AdditionalData = new { Language = SyntaxLanguage };
+        }
+    }
+
+    public class TypeSwapTextArea : Modifier
+    {
+        public override bool CanTargetProperty(CustomObject owner, CustomField field)
+        {
+            return field.UnderlyingType == "string" && field.EditorType == "FC_Default";
+        }
+
+        public override void OnApply(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRemove(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRender(RenderField field)
+        {
+            field.RenderComponent = "FC_TextArea";
         }
     }
 

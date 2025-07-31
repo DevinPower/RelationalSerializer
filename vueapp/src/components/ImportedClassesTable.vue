@@ -13,12 +13,12 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="importedClass in importedClasses" :key="importedClass.name">
+                <tr v-for="(importedClass, index) in importedClasses" :key="importedClass.name">
                   <td class="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-6">{{ importedClass.name }}</td>
                   <td class="px-3 py-4 text-sm whitespace-nowrap text-gray-500">--</td>
                   <td class="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6">
                     <span class="isolate inline-flex rounded-md shadow-xs">
-                      <button type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Edit</button>
+                      <button @click="changeRouteToTemplate(index)" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Edit</button>
                       <button type="button" class="relative -ml-px inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Reimport</button>
                       <button type="button" class="relative -ml-px inline-flex items-center rounded-r-md bg-red-200 px-3 py-2 text-sm font-semibold text-red-900 ring-1 ring-red-300 ring-inset hover:bg-red-100 focus:z-10">Delete</button>
                     </span>
@@ -49,6 +49,9 @@
         watch: {
         },
         methods: {
+          changeRouteToTemplate(template){
+            this.$router.push(`/template/${template}`);
+          }
         },
     });
 </script>

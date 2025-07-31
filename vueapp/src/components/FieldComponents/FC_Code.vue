@@ -1,10 +1,14 @@
 ﻿
 <template>
-  <CodeMirror
-    v-model="codeValue"
-    :extensions="[luaLang]"
-    basic tab
-  />
+    <div class="overflow-hidden rounded-lg bg-white shadow-sm">
+      <div class="p-0">
+        <CodeMirror
+          v-model="codeValue"
+          :extensions="[luaLang]"
+          basic tab
+        />
+      </div>
+    </div>
 </template>
 
 <script lang="js">

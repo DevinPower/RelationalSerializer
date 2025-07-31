@@ -2,7 +2,7 @@
 
 namespace webapi.Utility
 {
-    public interface iClassParser
+    public interface IClassParser
     {
         List<ParsedClass> GetTemplateClasses(string sourceCode);
     }
