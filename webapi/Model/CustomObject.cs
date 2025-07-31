@@ -107,6 +107,8 @@ namespace webapi.Model
             else
             {
                 builder.Append($"\"$id\": \"{GUID}\",");
+                resolvedGUIDs.Add(GUID);
+
                 foreach (CustomField customField in CustomFields)
                 {
                     string serialValue = "";
@@ -160,7 +162,6 @@ namespace webapi.Model
                     if (customField != CustomFields.Last())
                         builder.Append(',');
                 }
-                resolvedGUIDs.Add(GUID);
             }
             builder.Append("}");
 
