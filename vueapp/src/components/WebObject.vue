@@ -102,6 +102,8 @@
         },
         computed: {
             objectName: function () {
+                if (this.post == null)
+                    return null;
                 const propertyIndex = this.post.properties.findIndex(prop => prop.name === this.post.nameField);
                 if (propertyIndex == -1) return "new object";
                 return this.post.properties[propertyIndex].value;
@@ -152,6 +154,12 @@
                 }
 
                 this.fetchData(this.$route.params.project, this.$route.params.id);
+            },
+            'objectName': function(newVal) {
+                if (this.isInline || newVal == null)
+                    return;
+
+                this.$emit('nameChange', newVal);
             }
         },
         methods: {

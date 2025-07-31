@@ -1,5 +1,5 @@
 <template>
-    <title>RS - {{ projectName }}</title>
+    <title>RS - {{ editingText }}</title>
 
     <InitialSetupModal :open="showSetupModal" @close="showSetupModal = false" />
 
@@ -10,13 +10,16 @@
         </div>
 
         <div style="padding:16px; width:250px;">
-          <ObjectNav v-if="route" :project="route.params.project" :id="route.params.id"/>
+          <ObjectNav v-if="route" 
+            :project="route.params.project" 
+            :id="route.params.id"
+            :editingText="editingText"/>
         </div>
 
 
         <main class="flex-5 flex flex-col min-h-screen bg-gray-100">
             <div class="router-view-container grow flex flex-col">
-                <router-view class="router-view-content grow" />
+                <router-view v-on:nameChange="updateEditingText" class="router-view-content grow" />
             </div>
         </main>
     </div>
@@ -39,9 +42,9 @@
     },
     data() {
       return {
-        projectName: 'demo',
         showSetupModal: false,
-        loaded: false
+        loaded: false,
+        editingText: null
       };
     },
     created(){
@@ -66,6 +69,9 @@
           //TODO: Consider we don't want to keep the active object active
           path: `/edit/${index}/${this.route.params.id}`
         });
+      },
+      updateEditingText(newVal){
+        this.editingText = newVal;
       }
     }
   }

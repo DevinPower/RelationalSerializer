@@ -1,7 +1,6 @@
 <template>
     <div class="post fixed top-0">        
 
-
         <div class="flex items-center my-4">
             <div class="relative flex items-center justify-between">
                 <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
@@ -41,7 +40,12 @@
                 @mouseover="hoverGuid = object.guid"
                 @mouseout="hoverGuid = null"
             >
-                <small>{</small> {{ object.name }} <small>}</small>
+                <span>
+                    <small>{ </small> 
+                    <span v-if="id == object.guid || editingText == null"> {{ editingText }} </span>
+                    <span v-else> {{ object.name }} </span>
+                    <small> }</small>
+                 </span>
             </router-link>
         </div>
 
@@ -60,7 +64,7 @@
         } from '@heroicons/vue/24/outline';
 
     export default defineComponent({
-        props: ['project', 'id'],
+        props: ['project', 'id', 'editingText'],
         data() {
             return {
                 loading: false,
