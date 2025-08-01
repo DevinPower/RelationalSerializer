@@ -150,8 +150,16 @@ namespace webapi.Model
                     {
                         StringBuilder referenceObject = new StringBuilder();
 
-                        ProjectManager.GetCustomObjectByGuid(customField.Value.ToString()).Export(referenceObject, resolvedGUIDs);
-                        serialValue = referenceObject.ToString();
+                        if (customField.Value != null)
+                        {
+                            ProjectManager.GetCustomObjectByGuid(customField.Value.ToString()).Export(referenceObject, resolvedGUIDs);
+                            serialValue = referenceObject.ToString();
+                        }
+                        else
+                        {
+                            serialValue = "null";
+                        }
+
                     }
                     else
                     {

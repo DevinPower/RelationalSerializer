@@ -23,6 +23,7 @@ services:
     depends_on:
       - db
     environment:
+      - ASPNETCORE_URLS=http://*:80;http://*:443
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionString=Server=db;Initial Catalog=RelationalSerializer;User=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
     ports:
