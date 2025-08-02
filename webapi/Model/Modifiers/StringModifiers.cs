@@ -105,4 +105,29 @@ namespace webapi.Model.Modifiers
         {
         }
     }
+
+    public class GuidField : Modifier
+    {
+        public override bool CanTargetProperty(CustomObject owner, CustomField field)
+        {
+            return field.UnderlyingType == "string" && !field.IsArray;
+        }
+
+        public override void OnApply(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRemove(CustomObject owner, CustomField field)
+        {
+        }
+
+        public override void OnRender(RenderField field)
+        {
+        }
+
+        public override object OnExport(CustomObject owner, CustomField field, string serialValue)
+        {
+            return owner.GUID;
+        }
+    }
 }

@@ -166,6 +166,12 @@ namespace webapi.Model
                         serialValue = JsonConvert.SerializeObject(customField.Value);
                     }
 
+                    foreach (Modifier customFieldModifier in customField.Modifiers)
+                    {
+                        serialValue = customFieldModifier.OnExport(this, customField, serialValue).ToString();
+                        serialValue = $"\"{serialValue}\"";
+                    }
+
                     builder.AppendLine($"\"{customField.Name}\" : {serialValue}");
                     if (customField != CustomFields.Last())
                         builder.Append(',');

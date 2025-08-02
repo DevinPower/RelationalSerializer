@@ -25,6 +25,11 @@ namespace webapi.Model.Modifiers
         public abstract void OnRemove(CustomObject owner, CustomField field);
         public abstract void OnRender(RenderField field);
 
+        public virtual object OnExport(CustomObject owner, CustomField field, string serialValue)
+        {
+            return serialValue;
+        }
+
         public RenderObject UnderlyingObject { get; set; }
 
         public void LoadUnderlyingObject(bool loadValues)
