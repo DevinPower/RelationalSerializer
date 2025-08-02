@@ -127,7 +127,7 @@ namespace webapi.Model.Modifiers
 
         public override object OnExport(CustomObject owner, CustomField field, string serialValue)
         {
-            return owner.GUID;
+            return $"\"{owner.GUID}\"";
         }
     }
 }

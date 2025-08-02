@@ -169,7 +169,6 @@ namespace webapi.Model
                     foreach (Modifier customFieldModifier in customField.Modifiers)
                     {
                         serialValue = customFieldModifier.OnExport(this, customField, serialValue).ToString();
-                        serialValue = $"\"{serialValue}\"";
                     }
 
                     builder.AppendLine($"\"{customField.Name}\" : {serialValue}");
