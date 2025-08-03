@@ -1,6 +1,5 @@
 <template>
     <div class="post fixed top-0">        
-
         <div class="flex items-center my-4">
             <div class="relative flex items-center justify-between">
                 <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
@@ -41,11 +40,11 @@
                 @mouseout="hoverGuid = null"
             >
                 <span>
-                    <small>{ </small> 
-                    <span v-if="id == object.guid || editingText == null"> {{ editingText }} </span>
-                    <span v-else> {{ object.name }} </span>
+                    <small>{ </small>
+                    <span v-if="id == object.guid && editingText">{{ editingText }}</span>
+                    <span v-else>{{ object.name }}</span>
                     <small> }</small>
-                 </span>
+                </span>
             </router-link>
         </div>
 
