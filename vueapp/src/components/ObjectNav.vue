@@ -21,7 +21,7 @@
 
         <div style="height:16px;" />
 
-        <div v-for="object in post" :key="object" class="w-full">
+        <div v-for="object in post" :key="object.guid" class="w-full">
             <router-link
                 v-if="object.name.toUpperCase().includes(searchText.toUpperCase())"
                 class="w-full block"
@@ -32,9 +32,9 @@
                     backgroundColor: (id == object.guid || hoverGuid === object.guid) ? 
                                         '#f3f4f6' : 'inherit',
                     padding: '0',
-                    marginLeft: '-16px',
-                    marginRight: '-16px',
-                    width: 'calc(100% + 32px)'
+                    marginLeft: '0px',
+                    marginRight: '0px',
+                    width: '100%'
                 }"
                 @mouseover="hoverGuid = object.guid"
                 @mouseout="hoverGuid = null"
@@ -67,7 +67,7 @@
         data() {
             return {
                 loading: false,
-                post: null,
+                post: [],
                 projectName: "",
                 searchText: "",
                 contextGuid: "",
