@@ -3,6 +3,7 @@
           <input rows="3" class="block w-full resize-none text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" 
             placeholder="..." 
             :value="inputValue"
+            spellcheck="true"
             @input="debouncedEmit($event.target.value)" />
     </div>
 </template>
@@ -34,7 +35,7 @@
                 if (this._debounceTimeout) clearTimeout(this._debounceTimeout);
                 this._debounceTimeout = setTimeout(() => {
                     this.$emit('update:modelValue', val);
-                }, 250);
+                }, 200);
             }
         },
     });

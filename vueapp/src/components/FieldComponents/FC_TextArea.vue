@@ -3,6 +3,7 @@
       <textarea rows="4" class="block w-full shadow-sm rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" 
         placeholder="..." 
         :value="inputValue"
+        spellcheck="true"
         @input="debouncedEmit($event.target.value)" />
     </div>
 </template>
@@ -34,7 +35,7 @@
                 if (this._debounceTimeout) clearTimeout(this._debounceTimeout);
                 this._debounceTimeout = setTimeout(() => {
                     this.$emit('update:modelValue', val);
-                }, 300);
+                }, 200);
             }
         },
     });

@@ -14,7 +14,8 @@ namespace webapi
         // Debouncing mechanism for database writes
         private static readonly ConcurrentDictionary<string, Timer> _fieldUpdateTimers = new ConcurrentDictionary<string, Timer>();
         private static readonly ConcurrentDictionary<string, (CustomField field, string guid)> _pendingUpdates = new ConcurrentDictionary<string, (CustomField, string)>();
-        private const int DEBOUNCE_DELAY_MS = 500; // 500ms delay before database write
+        private const int DEBOUNCE_DELAY_MS = 1000;
+		
         //TODO: Currently this updates for all clients, but we need to make it so it
         //      only updates for the clients that are viewing the same object
         public async Task UpdateField(string project, string objectid, string field, object value)
