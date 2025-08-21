@@ -49,7 +49,7 @@
           if (this._debounceTimeout) clearTimeout(this._debounceTimeout);
           this._debounceTimeout = setTimeout(() => {
             this.$emit('update:modelValue', val);
-          }, 150);
+          }, 200);
         }
       }
     });

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using webapi.DAL;
 using webapi.Model;
 using webapi.Model.Modifiers;
@@ -10,6 +11,10 @@ namespace webapi
 {
     public class CoopHub : Hub
     {
+        // Debouncing mechanism for database writes
+        private static readonly ConcurrentDictionary<string, Timer> _fieldUpdateTimers = new ConcurrentDictionary<string, Timer>();
+        private static readonly ConcurrentDictionary<string, (CustomField field, string guid)> _pendingUpdates = new ConcurrentDictionary<string, (CustomField, string)>();
+        private const int DEBOUNCE_DELAY_MS = 500; // 500ms delay before database write
         //TODO: Currently this updates for all clients, but we need to make it so it
         //      only updates for the clients that are viewing the same object
         public async Task UpdateField(string project, string objectid, string field, object value)
@@ -53,7 +58,8 @@ namespace webapi
                 await Clients.All.SendAsync("updateArrayFromOther", field, value, arrayIndex);
             }
             
-            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == field), obj.GUID);
+            // Use debounced database update instead of immediate write
+            DebouncedUpsertField(obj.CustomFields.First(x => x.Name == field), obj.GUID, field);
         }
 
         public async Task RemoveFromArray(string project, string objectid, string field, int index)
@@ -73,7 +79,8 @@ namespace webapi
 
             await Clients.Others.SendAsync("removeFromArrayFromOther", field, index);
 
-            await DBProjects.UpsertFieldAsync(obj.CustomFields.First(x => x.Name == field), obj.GUID);
+            // Use debounced database update instead of immediate write
+            DebouncedUpsertField(obj.CustomFields.First(x => x.Name == field), obj.GUID, field);
         }
 
         public async Task InstantiateIntoField(string project, string guid, string field)
@@ -91,6 +98,48 @@ namespace webapi
             referenceProject.CreateObject(instantiated, referenceProject.GUID);
 
             await UpdateField(project, guid, field, instantiated.GUID);
+        }
+
+        /// <summary>
+        /// Debounces database updates to reduce database hammering during rapid field edits
+        /// </summary>
+        private static void DebouncedUpsertField(CustomField field, string guid, string fieldName)
+        {
+            string key = $"{guid}_{fieldName}";
+            
+            // Store the latest update for this field
+            _pendingUpdates[key] = (field, guid);
+            
+            // Cancel existing timer if present
+            if (_fieldUpdateTimers.TryGetValue(key, out Timer? existingTimer))
+            {
+                existingTimer?.Dispose();
+            }
+            
+            // Create new timer that will execute the database update after delay
+            Timer newTimer = new Timer(async _ =>
+            {
+                if (_pendingUpdates.TryRemove(key, out (CustomField field, string guid) pendingUpdate))
+                {
+                    try
+                    {
+                        await DBProjects.UpsertFieldAsync(pendingUpdate.field, pendingUpdate.guid);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error but don't crash the application
+                        Console.WriteLine($"Error updating field {fieldName} for object {pendingUpdate.guid}: {ex.Message}");
+                    }
+                }
+                
+                // Clean up timer
+                if (_fieldUpdateTimers.TryRemove(key, out Timer? timer))
+                {
+                    timer?.Dispose();
+                }
+            }, null, DEBOUNCE_DELAY_MS, Timeout.Infinite);
+            
+            _fieldUpdateTimers[key] = newTimer;
         }
     }
 }
