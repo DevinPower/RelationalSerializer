@@ -42,9 +42,11 @@ namespace webapi.DAL
             using (SqlConnection conn = new SqlConnection(Settings.ConnectionString))
             {
                 await conn.OpenAsync();
+                
+                // Process all fields using the same connection for better performance
                 foreach(CustomField field in customObject.CustomFields)
                 {
-                    await UpsertFieldAsync(field, customObject.GUID);
+                    await UpsertFieldWithConnectionAsync(field, customObject.GUID, conn);
                 }
 
                 SqlCommand objCmd = new SqlCommand("UpsertObjectMeta", conn);
@@ -53,6 +55,24 @@ namespace webapi.DAL
                 objCmd.Parameters.Add(new SqlParameter("@project", Project));
                 await objCmd.ExecuteNonQueryAsync();
             }
+        }
+
+        /// <summary>
+        /// Helper method to upsert field using an existing connection for better performance
+        /// </summary>
+        private static async Task UpsertFieldWithConnectionAsync(CustomField field, string GUID, SqlConnection conn)
+        {
+            SqlCommand cmd = new SqlCommand("UpsertField", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add(new SqlParameter("@guid", GUID));
+            cmd.Parameters.Add(new SqlParameter("@field", field.Name));
+            cmd.Parameters.Add(new SqlParameter("@type", field.UnderlyingType));
+            cmd.Parameters.Add(new SqlParameter("@isArray", field.IsArray));
+
+            string serializedValue = JsonConvert.SerializeObject(field.Value);
+            cmd.Parameters.Add(new SqlParameter("@value", serializedValue));
+
+            await cmd.ExecuteNonQueryAsync();
         }
 
         public static async Task UpsertModsAsync(CustomObject customObject)
