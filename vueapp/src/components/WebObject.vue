@@ -3,7 +3,7 @@
 
           <div v-for="field in post.properties" :key="field" class="sm:col-span-4">
             <div v-if="!field.isArray" class="mt-2">
-                <label :for="field.name" class="block text-sm/6 font-medium text-gray-900">{{ field.name }}</label>
+                <label :for="field.name" class="pr-3 text-base font-semibold text-gray-900">{{ field.name }}</label>
                 <component :is="field.renderComponent" v-model="field.value"
                     :additionalData="field.additionalData"
                     @update:model-value="updateField(project, id, field.name, field.value)" 
@@ -173,6 +173,7 @@
                         this.post = json;
                         this.loading = false;
                         this.DisplayNameIndex = this.post.properties.findIndex(prop => prop.name === this.post.DisplayName);
+                        this.joinRoom();
                         return;
                     });
             },
@@ -198,6 +199,9 @@
             },
             instantiateInlineReference(fieldname) {
                 connection.invoke('InstantiateIntoField', this.project, this.id, fieldname);
+            },
+            joinRoom(){
+                connection.invoke('JoinRoom', this.project, this.id);
             }
         },
     });

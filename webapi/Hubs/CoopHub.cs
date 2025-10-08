@@ -21,16 +21,21 @@ namespace webapi
 
         public async Task JoinRoom(string project, string objectid)
         {
+            string roomId = $"{project}/{objectid}";
             if (_connectionsMap.ContainsKey(Context.ConnectionId))
             {
                 Groups.RemoveFromGroupAsync(Context.ConnectionId, _connectionsMap[Context.ConnectionId]);
                 //TODO: If no one left in group, start a timer to drop this object out of memory
             }
+            else
+            {
+                _connectionsMap.Add(Context.ConnectionId, "");
+            }
 
             await Groups.AddToGroupAsync(Context.ConnectionId,
-                $"{project}/{objectid}");
+                roomId);
 
-            _connectionsMap.Add(Context.ConnectionId, $"{project}/{objectid}");
+            _connectionsMap[Context.ConnectionId] = roomId;
         }
 
         //TODO: Currently this updates for all clients, but we need to make it so it
