@@ -19,7 +19,7 @@
 
         <main class="flex-5 flex flex-col min-h-screen bg-gray-100">
             <div class="router-view-container grow flex flex-col">
-                <router-view v-on:nameChange="updateEditingText" class="router-view-content grow" />
+                <router-view class="router-view-content grow" />
             </div>
         </main>
     </div>
@@ -69,9 +69,6 @@
           //TODO: Consider we don't want to keep the active object active
           path: `/edit/${index}/${this.route.params.id}`
         });
-      },
-      updateEditingText(newVal){
-        this.editingText = newVal;
       }
     }
   }

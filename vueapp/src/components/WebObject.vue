@@ -158,8 +158,6 @@
             'objectName': function(newVal) {
                 if (this.isInline || newVal == null)
                     return;
-
-                this.$emit('nameChange', newVal);
             }
         },
         methods: {

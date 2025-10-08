@@ -64,7 +64,7 @@ AS
 BEGIN
 	
 	SET NOCOUNT ON;
-	select guid, project, NAV_HIDDEN, EXPORT_EXCLUDE from [dbo].[CustomObjectMeta]
+	select guid, project, NAV_HIDDEN, EXPORT_EXCLUDE from [dbo].[CustomObjectMeta] ORDER BY TIME_CREATED ASC
 END
 GO
 SET ANSI_NULLS ON
