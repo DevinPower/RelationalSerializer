@@ -21,31 +21,32 @@
 
         <div style="height:16px;" />
 
-        <div v-for="object in post" :key="object.guid" class="w-full">
-            <router-link
-                v-if="object.name.toUpperCase().includes(searchText.toUpperCase())"
-                class="w-full block"
-                :to="{ path: '/edit/' + project + '/' + object.guid }"
-                @contextmenu.prevent.stop="handleClick($event, object.guid)"
-                :style="{
-                    color: object.exportExcluded ? '#636363' : 'all',
-                    backgroundColor: (id == object.guid || hoverGuid === object.guid) ? 
-                                        '#f3f4f6' : 'inherit',
-                    padding: '0',
-                    marginLeft: '0px',
-                    marginRight: '0px',
-                    width: '100%'
-                }"
-                @mouseover="hoverGuid = object.guid"
-                @mouseout="hoverGuid = null"
-            >
-                <span>
-                    <small>{ </small>
-                    <span v-if="id == object.guid && editingText">{{ editingText }}</span>
-                    <span v-else>{{ object.name }}</span>
-                    <small> }</small>
-                </span>
-            </router-link>
+        <div style="overflow-y:scroll; direction: rtl; max-height: calc(100vh - 116px);">
+            <div v-for="object in post" :key="object.guid" class="w-full" style="direction:ltr;">
+                <router-link
+                    v-if="object.name.toUpperCase().includes(searchText.toUpperCase())"
+                    class="w-full block"
+                    :to="{ path: '/edit/' + project + '/' + object.guid }"
+                    @contextmenu.prevent.stop="handleClick($event, object.guid)"
+                    :style="{
+                        color: object.exportExcluded ? '#636363' : 'all',
+                        backgroundColor: (id == object.guid || hoverGuid === object.guid) ? 
+                                            '#f3f4f6' : 'inherit',
+                        padding: '0',
+                        marginLeft: '0px',
+                        marginRight: '0px',
+                        width: '100%'
+                    }"
+                    @mouseover="hoverGuid = object.guid"
+                    @mouseout="hoverGuid = null"
+                >
+                    <span>
+                        <small>{ </small>
+                        <span>{{ object.name }}</span>
+                        <small> }</small>
+                    </span>
+                </router-link>
+            </div>
         </div>
 
     </div>

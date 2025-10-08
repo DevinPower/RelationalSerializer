@@ -8,7 +8,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[CustomObjectMeta](
-	[GUID] [nvarchar](36) NOT NULL,
+	[GUID] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[PROJECT] [nvarchar](36) NOT NULL,
 	[TIME_CREATED] [datetime] NOT NULL,
 	[EXPORT_EXCLUDE] [bit] NULL,
@@ -16,9 +16,8 @@ CREATE TABLE [dbo].[CustomObjectMeta](
 ) ON [PRIMARY]
 GO
 
-
 CREATE TABLE [dbo].[CustomObjects](
-	[GUID] [nvarchar](36) NOT NULL,
+	[GUID] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[PROPERTY] [nvarchar](max) NOT NULL,
 	[PROPERTY_VALUE] [nvarchar](max) NULL,
 	[LAST_EDITED] [datetime] NOT NULL,
@@ -44,19 +43,19 @@ CREATE TABLE [dbo].[Enums](
 GO
 
 CREATE TABLE [dbo].[ProjectMeta](
-	[GUID] [nvarchar](36) NOT NULL,
+	[GUID] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[NAME] [nvarchar](max) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
 CREATE TABLE [dbo].[ProjectObjectTemplatePairs](
-	[PROJECT_GUID] [nvarchar](36) NOT NULL,
+	[PROJECT_GUID] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[OBJECT_GUID] [nvarchar](36) NOT NULL
 ) ON [PRIMARY]
 GO
 
 CREATE TABLE [dbo].[TemplateModData](
-	[guid] [nvarchar](36) NOT NULL,
+	[guid] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[field] [nvarchar](max) NOT NULL,
 	[value] [nvarchar](max) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

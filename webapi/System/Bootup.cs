@@ -1,4 +1,5 @@
-﻿using webapi.DAL;
+﻿using System.Diagnostics;
+using webapi.DAL;
 using webapi.Model;
 using webapi.Utility;
 
@@ -11,11 +12,32 @@ namespace webapi
             ProjectManager.projects = new List<ProjectObject>();
             Settings.ConnectionString = configuration["ConnectionString"];
 
+            Stopwatch projectTimer = new Stopwatch();
+            projectTimer.Start();
             await LoadProjects();
+            projectTimer.Stop();
+
+            Stopwatch templateTimer = new Stopwatch();
+            templateTimer.Start();
             List<string> templateGUIDs = await LoadTemplates();
+            templateTimer.Stop();
+
+            Stopwatch objectTimer = new Stopwatch();
+            objectTimer.Start();
             await LoadObjects(templateGUIDs);
+            objectTimer.Stop();
+
             ApplyTemplateModifiersToObjects();
             LoadSettings();
+
+            string bootStats = string.Format("Load duration:\n\tProjects={0}\n\tTemplates={1}\n\tObjects={2}",
+                projectTimer.Elapsed.TotalSeconds.ToString(),
+                templateTimer.Elapsed.TotalSeconds.ToString(),
+                objectTimer.Elapsed.TotalSeconds.ToString());
+
+            Console.WriteLine(bootStats);
+
+            Console.WriteLine("Established connection with database.");
         }
 
         static async Task LoadProjects()

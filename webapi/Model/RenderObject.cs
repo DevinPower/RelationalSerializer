@@ -56,11 +56,18 @@ namespace webapi.Model
 
             foreach(CustomField field in model.CustomFields)
             {
+                bool dontAdd = false;
                 RenderField newField = new RenderField(field.Name, field.Value, field.EditorType, field.IsArray);
                 if (field.Modifiers != null)
                 {
                     foreach (Modifier modifier in field.Modifiers)
                     {
+                        if (modifier is HiddenModifier)
+                        {
+                            dontAdd = true;
+                            break;
+                        }
+
                         modifier.OnRender(newField);
                     }
                 }
@@ -68,7 +75,8 @@ namespace webapi.Model
                 if (field.IsReference)
                     newField.AdditionalData = new { ReferenceCategory = TypeUtilities.GetProjectFromName(field.UnderlyingType) };
 
-                Properties.Add(newField);
+                if (!dontAdd)
+                    Properties.Add(newField);
             }
         }
 

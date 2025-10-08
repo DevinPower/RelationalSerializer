@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen flex flex-col fixed top-0">
-    <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6">
+    <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-800 px-6">
       <nav class="flex flex-1 flex-col" aria-label="Sidebar" style="padding:16px;">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
           <li>
             <ul role="list" class="-mx-2 space-y-1">
               <li v-for="item in navigation" :key="item.name">
-                <router-link :to="item.href" :class="[item.current ? 'bg-indigo-700 text-white' : 'text-indigo-200 hover:bg-indigo-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
-                  <component :is="item.icon" :class="[item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white', 'size-6 shrink-0']" aria-hidden="true" />{{ item.name }}
+                <router-link :to="item.href" :class="[item.current ? 'bg-stone-700 text-white' : 'text-stone-200 hover:bg-stone-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                  <component :is="item.icon" :class="[item.current ? 'text-white' : 'text-stone-200 group-hover:text-white', 'size-6 shrink-0']" aria-hidden="true" />{{ item.name }}
                 </router-link>
               </li>
             </ul>
@@ -16,8 +16,8 @@
             <div class="text-xs/6 font-semibold text-gray-400">Projects</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
               <li v-for="(item, index) in secondaryNavigation" :key="item.name">
-                  <a style="cursor: pointer;" @click="changeProject(index)" :href="item.href" :class="[selectedIndex == index ? 'bg-indigo-700 text-white' : 'text-indigo-200 hover:bg-indigo-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
-                    <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">{{ item.name[0] }}</span>
+                  <a style="cursor: pointer;" @click="changeProject(index)" :href="item.href" :class="[selectedIndex == index ? 'bg-stone-700 text-white' : 'text-stone-200 hover:bg-stone-700 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold']">
+                    <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-stone-400 bg-stone-500 text-[0.625rem] font-medium text-white">{{ item.name[0] }}</span>
                     <span class="truncate">{{ item.name }}</span>
                 </a>
               </li>

@@ -14,8 +14,25 @@ namespace webapi
         // Debouncing mechanism for database writes
         private static readonly ConcurrentDictionary<string, Timer> _fieldUpdateTimers = new ConcurrentDictionary<string, Timer>();
         private static readonly ConcurrentDictionary<string, (CustomField field, string guid)> _pendingUpdates = new ConcurrentDictionary<string, (CustomField, string)>();
-        private const int DEBOUNCE_DELAY_MS = 1000;
-		
+        private static Dictionary<string, string> _connectionsMap =
+            new Dictionary<string, string>();
+
+        private const int DEBOUNCE_DELAY_MS = 5000;
+
+        public async Task JoinRoom(string project, string objectid)
+        {
+            if (_connectionsMap.ContainsKey(Context.ConnectionId))
+            {
+                Groups.RemoveFromGroupAsync(Context.ConnectionId, _connectionsMap[Context.ConnectionId]);
+                //TODO: If no one left in group, start a timer to drop this object out of memory
+            }
+
+            await Groups.AddToGroupAsync(Context.ConnectionId,
+                $"{project}/{objectid}");
+
+            _connectionsMap.Add(Context.ConnectionId, $"{project}/{objectid}");
+        }
+
         //TODO: Currently this updates for all clients, but we need to make it so it
         //      only updates for the clients that are viewing the same object
         public async Task UpdateField(string project, string objectid, string field, object value)
@@ -43,7 +60,7 @@ namespace webapi
                     ((IValidator)modifier).Validate(fieldObject, oldValue);
                 }
 
-                await Clients.All.SendAsync("updateFieldFromOther", field, fieldObject.Value);
+                await Clients.Group($"{project}/{objectid}").SendAsync("updateFieldFromOther", field, fieldObject.Value);
             }
             else
             {
@@ -56,7 +73,7 @@ namespace webapi
                 valueList[arrayIndex] = value;
                 fieldObject.Value = valueList;
 
-                await Clients.All.SendAsync("updateArrayFromOther", field, value, arrayIndex);
+                await Clients.Group($"{project}/{objectid}").SendAsync("updateArrayFromOther", field, value, arrayIndex);
             }
             
             // Use debounced database update instead of immediate write
