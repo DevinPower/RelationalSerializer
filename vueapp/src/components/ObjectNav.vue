@@ -1,5 +1,5 @@
 <template>
-    <div class="post fixed top-0">        
+    <div class="post fixed top-0" style="overflow-x:hidden; width:200px;">
         <div class="flex items-center my-4">
             <div class="relative flex items-center justify-between">
                 <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
@@ -35,7 +35,8 @@
                         padding: '0',
                         marginLeft: '0px',
                         marginRight: '0px',
-                        width: '100%'
+                        width: '100%',
+                        'overflow-x': 'hidden'
                     }"
                     @mouseover="hoverGuid = object.guid"
                     @mouseout="hoverGuid = null"

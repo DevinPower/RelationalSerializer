@@ -8,6 +8,7 @@ namespace webapi.Model
 
         public string GithubAPIKey { get; set; }
         public string GithubRepository { get; set; }
+        public string JiraAPIKey { get; set; }
         public bool RegisterWebhooks { get; set; }
     }
 }

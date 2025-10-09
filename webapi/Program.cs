@@ -37,6 +37,7 @@ try
 catch(Exception ex)
 {
     Console.WriteLine($"Error on startup. {ex.Message}");
+    throw;
 }
 //app.UseHttpsRedirection();
 

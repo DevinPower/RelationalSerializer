@@ -187,6 +187,9 @@ namespace webapi.Model
             PropertyInfo[] properties = newObject.GetType().GetProperties();
             foreach (PropertyInfo property in properties)
             {
+                if (CustomFields.Count(x => x.Name == property.Name) == 0)
+                    continue;
+
                 CustomField customField = CustomFields.First(x => x.Name == property.Name);
                 property.SetValue(newObject, customField.Value);
             }
