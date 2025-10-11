@@ -116,7 +116,7 @@ namespace webapi
             if (settingsProject.CustomObjects.Count == 0)
                 CreateSettingsObject(settingsProject);
 
-            InstanceSettings.Singleton = settingsProject.CustomObjects.First().ReflectIntoClass<InstanceSettings>();
+            InstanceSettings.Singleton = settingsProject.CustomObjects.Last().ReflectIntoClass<InstanceSettings>();
         }
 
         static void CreateSettings()

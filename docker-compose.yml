@@ -1,31 +1,13 @@
-version: '3.8'
-
 services:
-  db:
-    build:
-      context: ./Database
-      dockerfile: Dockerfile
-    container_name: relational_db
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=${SA_PASSWORD}
-    ports:
-      - "1433:1433"
-    volumes:
-      - db_data:/var/opt/mssql
-    restart: unless-stopped
-
   webapi:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: relational_webapi
-    depends_on:
-      - db
     environment:
       - ASPNETCORE_URLS=http://*:80;http://*:443
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionString=Server=db;Initial Catalog=RelationalSerializer;User=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+      - ConnectionString=${CONNECTION_STRING}
     ports:
       - "8080:80"
       - "8443:443"

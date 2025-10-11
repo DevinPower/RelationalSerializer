@@ -110,11 +110,12 @@ namespace webapi.Model
             await DBProjects.DeleteObjectAsync(guid);
         }
 
+        //TODO: We have to have evertyhing in memory for this strategy. Let's not do that.
         public StringBuilder Export(StringBuilder builder, List<string> resolvedGUIDs)
         {
             builder.Append($"\"{Name}\" : [");
 
-            foreach(CustomObject customObject in CustomObjects)
+            foreach(CustomObject customObject in CustomObjects.Where(x => !x.ExcludeExport))
             {
                 customObject.Export(builder, resolvedGUIDs);
                 if (customObject != CustomObjects.Last())
