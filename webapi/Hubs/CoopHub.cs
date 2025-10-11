@@ -18,6 +18,7 @@ namespace webapi
             new Dictionary<string, string>();
 
         private const int DEBOUNCE_DELAY_MS = 5000;
+        private const string NAV_ROOM = "!system!nav!";
 
         public async Task JoinRoom(string project, string objectid)
         {
@@ -38,6 +39,11 @@ namespace webapi
             _connectionsMap[Context.ConnectionId] = roomId;
         }
 
+        public async Task JoinNavRoom()
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, NAV_ROOM);
+        }
+
         //TODO: Currently this updates for all clients, but we need to make it so it
         //      only updates for the clients that are viewing the same object
         public async Task UpdateField(string project, string objectid, string field, object value)
@@ -48,6 +54,7 @@ namespace webapi
                 arrayIndex = int.Parse(field.Split('[')[1].Split(']')[0]);
                 field = field.Split('[')[0];
             }
+
             int projectInteger;
             if (!Int32.TryParse(project, out projectInteger))
                 return;
@@ -65,6 +72,9 @@ namespace webapi
                     ((IValidator)modifier).Validate(fieldObject, oldValue);
                 }
 
+                if (obj.NameField == field)
+                    await Clients.Group(NAV_ROOM).SendAsync("nameChange", objectid, fieldObject.Value);
+                
                 await Clients.Group($"{project}/{objectid}").SendAsync("updateFieldFromOther", field, fieldObject.Value);
             }
             else

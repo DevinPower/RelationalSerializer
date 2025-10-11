@@ -59,10 +59,16 @@
 </template>
 
 <script lang="js">
+    import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
     import { defineComponent } from 'vue';
     import 'vue-simple-context-menu/dist/vue-simple-context-menu.css';
     import {  PlusIcon, MagnifyingGlassIcon
         } from '@heroicons/vue/24/outline';
+
+    const connection = new HubConnectionBuilder()
+        .withUrl('/api/CoopHub')
+        .configureLogging(LogLevel.Information)
+        .build();
 
     export default defineComponent({
         props: ['project', 'id', 'editingText'],
@@ -118,10 +124,19 @@
                 ],
             };
         },
-        created() {
-            // fetch the data when the view is created and the data is
-            // already being observed
+        async created() {
+            connection.on('nameChange', (objectGuid, name) => {
+                const ind = this.post.findIndex(item => item.guid == objectGuid);
+                this.post[ind].name = name;
+            });
             this.fetchData();
+            
+            try {
+                await connection.start();
+                this.joinRoom();
+            } catch (err) {
+                console.error('SignalR connection failed:', err);
+            }
         },
         components: {
             PlusIcon, MagnifyingGlassIcon
@@ -169,6 +184,9 @@
             },
             optionClicked(event) {
                 event.option.value(event.item);
+            },
+            joinRoom(){
+                connection.invoke('JoinNavRoom');
             }
         },
     });
