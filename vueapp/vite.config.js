@@ -13,16 +13,32 @@ const certificateName = "vueapp"
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`)
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`)
 
+// Check if certificate files exist
+const certExists = fs.existsSync(certFilePath)
+const keyExists = fs.existsSync(keyFilePath)
+const httpsEnabled = certExists && keyExists
+
+// Log certificate status
+if (httpsEnabled) {
+  console.log('✓ HTTPS certificates found, enabling HTTPS server')
+} else {
+  console.log('⚠ HTTPS certificates not found, running HTTP only')
+  if (!certExists) console.log(`  Missing: ${certFilePath}`)
+  if (!keyExists) console.log(`  Missing: ${keyFilePath}`)
+}
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
     vue()
   ],
   server: {
-    https: {
-      key: fs.readFileSync(keyFilePath),
-      cert: fs.readFileSync(certFilePath),
-    },
+    ...(httpsEnabled && {
+      https: {
+        key: fs.readFileSync(keyFilePath),
+        cert: fs.readFileSync(certFilePath),
+      }
+    }),
     port: 5002,
     proxy: {
       '/api': {

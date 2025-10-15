@@ -37,7 +37,7 @@
       },
       "publishAllPorts": true,
       "useSSL": true,
-      "DockerfileRunArguments": "--net=RSNet2"
+      "DockerfileRunArguments": "--env-file .env -p 8080:80"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

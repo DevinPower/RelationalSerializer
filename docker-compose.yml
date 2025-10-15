@@ -4,6 +4,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: relational_webapi
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - ASPNETCORE_URLS=http://*:80;http://*:443
       - ASPNETCORE_ENVIRONMENT=Development
@@ -13,14 +19,14 @@ services:
       - "8443:443"
     restart: unless-stopped
 
-
   vueapp:
     build:
       context: ./vueapp
       dockerfile: Dockerfile
     container_name: relational_vueapp
     depends_on:
-      - webapi
+      webapi:
+        condition: service_healthy
     ports:
       - "80:80"
     restart: unless-stopped

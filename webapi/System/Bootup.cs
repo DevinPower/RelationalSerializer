@@ -7,6 +7,8 @@ namespace webapi
 {
     public class Bootup
     {
+        public static bool BootupSuccessful { get; private set; } = false;
+
         public static async Task Run(ConfigurationManager configuration)
         {
             ProjectManager.projects = new List<ProjectObject>();
@@ -38,6 +40,7 @@ namespace webapi
             Console.WriteLine(bootStats);
 
             Console.WriteLine("Established connection with database.");
+            BootupSuccessful = true;
         }
 
         static async Task LoadProjects()

@@ -1,6 +1,9 @@
+using webapi.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("Database");
 
 builder.Services
     .AddEndpointsApiExplorer()

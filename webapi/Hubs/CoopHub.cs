@@ -5,7 +5,6 @@ using System.Collections.Concurrent;
 using webapi.DAL;
 using webapi.Model;
 using webapi.Model.Modifiers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace webapi
 {
@@ -44,8 +43,6 @@ namespace webapi
             await Groups.AddToGroupAsync(Context.ConnectionId, NAV_ROOM);
         }
 
-        //TODO: Currently this updates for all clients, but we need to make it so it
-        //      only updates for the clients that are viewing the same object
         public async Task UpdateField(string project, string objectid, string field, object value)
         {
             int arrayIndex = -1;
