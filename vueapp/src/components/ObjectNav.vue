@@ -1,24 +1,25 @@
 <template>
-    <div class="post fixed top-0" style="overflow-x:hidden; width:200px;">
-        <div class="flex items-center my-4">
-            <div class="relative flex items-center justify-between">
-                <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
+    <div class="post fixed top-0" style="overflow-x:hidden; width:250px;">
+        <div style="width:225px">
+            <div class="flex items-center my-4">
+                <div class="relative flex items-center justify-between">
+                    <span class="bg-gray pr-3 text-base font-semibold text-gray-900">{{ projectName }}</span>
+                </div>
+                <div class="flex-grow border-t border-gray-300" />
+                <button @click="makeObject()" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
+                    <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
+                    <span>Compose</span>
+                </button>
             </div>
-            <div class="flex-grow border-t border-gray-300" />
-            <button @click="makeObject()" type="button" class="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50">
-                <PlusIcon class="-mr-0.5 -ml-1 size-5 text-gray-400" aria-hidden="true" />
-                <span>Compose</span>
-            </button>
-        </div>
 
-        <div class="flex flex-1 w-full justify-center px-2">
-            <div class="grid w-full grid-cols-1">
-                <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block w-full rounded-md bg-gray-700 py-1.5 pr-3 pl-10 text-base text-white outline-hidden placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 sm:text-sm/6" 
-                    placeholder="Search" v-model="searchText" />
-                <MagnifyingGlassIcon class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400" aria-hidden="true" />
+            <div class="flex flex-1 w-full justify-center px-2">
+                <div class="grid w-full grid-cols-1">
+                    <input type="search" name="search" aria-label="Search" class="col-start-1 row-start-1 block w-full rounded-md bg-gray-700 py-1.5 pr-3 pl-10 text-base text-white outline-hidden placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 sm:text-sm/6" 
+                        placeholder="Search" v-model="searchText" />
+                    <MagnifyingGlassIcon class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400" aria-hidden="true" />
+                </div>
             </div>
         </div>
-
         <div style="height:16px;" />
 
         <div style="overflow-y:scroll; direction: rtl; max-height: calc(100vh - 116px);">

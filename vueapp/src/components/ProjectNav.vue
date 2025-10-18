@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col fixed top-0">
+  <div class="min-h-screen flex flex-col fixed top-0" style="width:200px">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-800 px-6">
       <nav class="flex flex-1 flex-col" aria-label="Sidebar" style="padding:16px;">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">

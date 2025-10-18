@@ -19,8 +19,8 @@
                   <td class="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6">
                     <span class="isolate inline-flex rounded-md shadow-xs">
                       <button @click="changeRouteToTemplate(index)" type="button" class="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Edit</button>
-                      <button type="button" class="relative -ml-px inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Reimport</button>
-                      <button type="button" class="relative -ml-px inline-flex items-center rounded-r-md bg-red-200 px-3 py-2 text-sm font-semibold text-red-900 ring-1 ring-red-300 ring-inset hover:bg-red-100 focus:z-10">Delete</button>
+                      <button @click="reimportTemplate(index, importedClass.name)" type="button" class="relative -ml-px inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-10">Reimport</button>
+                      <button @click="deleteTemplate(index, importedClass.name)" type="button" class="relative -ml-px inline-flex items-center rounded-r-md bg-red-200 px-3 py-2 text-sm font-semibold text-red-900 ring-1 ring-red-300 ring-inset hover:bg-red-100 focus:z-10">Delete</button>
                     </span>
                   </td>
                 </tr>
@@ -31,26 +31,54 @@
       </div>
     </div>
   </div>
+  <ConfirmationModal v-if="confirmation" 
+                   :Header="confirmation.header"
+                   :Description="confirmation.description" 
+                   @confirm="confirmation.confirmCallback()"
+                   @cancel="confirmation.cancelCallback()" />
 </template>
 
 <script lang="js">
     import { defineComponent } from 'vue';
+  import ConfirmationModal from './ConfirmationModal.vue'
 
     export default defineComponent({
         props: ['importedClasses'],
         data() {
             return {
+              confirmation: null
             };
         },
         components: {
+          ConfirmationModal
         },
         created() {  
         },
         watch: {
         },
         methods: {
-          changeRouteToTemplate(template){
-            this.$router.push(`/template/${template}`);
+          changeRouteToTemplate(index){
+            this.$router.push(`/template/${index}`);
+          },
+          reimportTemplate(index, projectName){
+            const thisRef = this;
+            this.confirmation = {
+                header: "Reimport " + projectName + "?",
+                description: "Are you sure you want to reimport the project " + projectName + "?",
+                confirmCallback: function () {
+                    thisRef.confirmation = null;
+                    fetch('/api/project/' + projectName + '/reimport', {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" }
+                    });
+                },
+                cancelCallback: function () {
+                    thisRef.confirmation = null;
+                }
+            }
+          },
+          deleteTemplate(index, projectName){
+
           }
         },
     });

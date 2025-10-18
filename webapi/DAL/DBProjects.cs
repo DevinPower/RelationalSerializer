@@ -165,7 +165,9 @@ namespace webapi.DAL
 
                     List<Modifier> modifiers = ModifierCaster.CastIntoModifiers(value);
 
-                    completedObject.CustomFields.Where(x=>x.Name == field).First().Modifiers = modifiers;
+                    var matches = completedObject.CustomFields.Where(x => x.Name == field);
+                    if (matches.Count() > 0)
+                        matches.First().Modifiers = modifiers;
                 }
 
                 foreach(CustomField field in completedObject.CustomFields)
