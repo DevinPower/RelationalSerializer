@@ -54,7 +54,7 @@ namespace webapi.Model
 
             Properties = new List<RenderField>();
 
-            foreach(CustomField field in model.CustomFields)
+            foreach(CustomField field in model.CustomFields.OrderBy(x => x.ClassOrder))
             {
                 bool dontAdd = false;
                 RenderField newField = new RenderField(field.Name, field.Value, field.EditorType, field.IsArray);

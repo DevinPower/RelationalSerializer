@@ -305,3 +305,20 @@ BEGIN
     END
 END
 GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[UpdateClassFieldOrder]
+	@GUID nvarchar(36),
+	@field nvarchar(max),
+	@order int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	update [dbo].[TemplateModData] set [class_order] = @field where [guid] = @GUID and [field] = @field
+END
+GO

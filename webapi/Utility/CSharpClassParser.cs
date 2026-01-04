@@ -1,7 +1,7 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
-using webapi.Model;
+﻿using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using webapi.DAL;
+using webapi.Model;
 
 namespace webapi.Utility
 {
@@ -48,6 +48,11 @@ namespace webapi.Utility
 
             ProjectManager.AddProject(newProject);
             await DBProjects.UpsertModsAsync(objectTemplate);
+
+            foreach (CustomField field in objectTemplate.CustomFields)
+            {
+                newProject.UpdateFieldClassOrder(field.Name, field.ClassOrder);
+            }
         }
 
         public void LoadIntoExistingProject(ProjectObject existingProject)
@@ -110,6 +115,7 @@ namespace webapi.Utility
                     //cc.dependencies.Add(clean);
                 }
 
+                int classOrderCount = 0;
                 foreach (PropertyDeclarationSyntax property in properties)
                 {
                     TypeSyntax propertyType = property.Type;
@@ -133,12 +139,12 @@ namespace webapi.Utility
 
                     if (TypeUtilities.IsEnum(fieldType).Result)
                     {
-                        newField = new CustomField(propertyName, "enum", isArray);
+                        newField = new CustomField(propertyName, "enum", isArray, classOrderCount++);
                         newField.Modifiers.Add(new Model.Modifiers.ChoiceModifier() { EnumName = fieldType });
                     }
                     else
                     {
-                        newField = new CustomField(propertyName, fieldType, isArray);
+                        newField = new CustomField(propertyName, fieldType, isArray, classOrderCount++);
                     }
 
                     parsedFields.Add(newField);
@@ -181,6 +187,13 @@ namespace webapi.Utility
             {
                 CustomField matchedField = newObject.CustomFields.First(x => x.Name == field.Name);
                 project.ModifyType(field.Name, matchedField.UnderlyingType, matchedField.IsArray);
+            }
+
+            DBProjects.UpsertModsAsync(oldObject);
+
+            foreach (CustomField field in newObject.CustomFields)
+            {
+                project.UpdateFieldClassOrder(field.Name, field.ClassOrder);
             }
         }
     }

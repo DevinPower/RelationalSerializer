@@ -57,6 +57,7 @@ GO
 CREATE TABLE [dbo].[TemplateModData](
 	[guid] [nvarchar](36) PRIMARY KEY NOT NULL,
 	[field] [nvarchar](max) NOT NULL,
-	[value] [nvarchar](max) NULL
+	[value] [nvarchar](max) NULL,
+	[class_order] [int],
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

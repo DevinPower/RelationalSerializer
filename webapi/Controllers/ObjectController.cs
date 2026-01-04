@@ -22,6 +22,13 @@ public class ObjectController : ControllerBase
     {
         CustomObject requestedObject = ProjectManager.projects[project].CustomObjects
                     .First(x => x.GUID == guid);
+
+        foreach (var customField in requestedObject.CustomFields)
+        {
+            customField.ClassOrder = ProjectManager.projects[project].Templates[0].CustomFields
+                .First(x => x.Name == customField.Name).ClassOrder;
+        }
+
         RenderObject renderObject = new RenderObject(requestedObject);
 
         return Ok(renderObject);

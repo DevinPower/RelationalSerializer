@@ -5,6 +5,7 @@ using System.Text;
 using webapi.Controllers;
 using webapi.DAL;
 using webapi.Model.Modifiers;
+using webapi.Utility;
 
 namespace webapi.Model
 {
@@ -28,9 +29,10 @@ namespace webapi.Model
             CustomFields = new List<CustomField>();
 
             PropertyInfo[] properties = baseObject.GetType().GetProperties();
+            int propertyIndex = 0;
             foreach (PropertyInfo property in properties)
             {
-                CustomField customField = new CustomField(property.Name, property.PropertyType.Name, false);
+                CustomField customField = new CustomField(property.Name, property.PropertyType.Name, false, propertyIndex++);
                 customField.Value = property.GetValue(baseObject);
                 customField.LoadDefaultEditor();
                 CustomFields.Add(customField);
@@ -164,6 +166,9 @@ namespace webapi.Model
                     else
                     {
                         serialValue = JsonConvert.SerializeObject(customField.Value);
+
+                        if (TypeUtilities.IsNumberType(customField.UnderlyingType))
+                            serialValue = serialValue.Replace("\"", "");
                     }
 
                     foreach (Modifier customFieldModifier in customField.Modifiers)

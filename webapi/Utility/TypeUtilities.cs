@@ -25,6 +25,18 @@ namespace webapi.Utility
             return "FC_Default";
         }
 
+        public static bool IsNumberType(string type)
+        {
+            switch (type.ToLower())
+            {
+                case "int32":
+                case "int":
+                    return true;
+
+                default: return false;
+            }
+        }
+
         public static bool IsReferenceType(string type)
         {
             return ProjectManager.projects.Count(x => x.Name == type) > 0;

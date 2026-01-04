@@ -13,6 +13,7 @@ namespace webapi.Model
         public string EditorType { get; set; }
         public object Value { get; set; }
         public bool IsArray { get; set; }
+        public int ClassOrder { get; set; }
         public bool IsReference
         {
             get
@@ -24,11 +25,12 @@ namespace webapi.Model
         public List<Modifier> Modifiers { get; set; }
         public List<Modifier> AvailableModifiers { get; set; }
 
-        public CustomField(string name, string underlyingType, bool isArray) 
+        public CustomField(string name, string underlyingType, bool isArray, int classOrder) 
         {
             this.Name = name;
             this.UnderlyingType = underlyingType;
             this.IsArray = isArray;
+            this.ClassOrder = classOrder;
 
             Modifiers = new List<Modifier>();
             AvailableModifiers = new List<Modifier>();
@@ -46,7 +48,7 @@ namespace webapi.Model
 
         public CustomField Copy()
         {
-            CustomField copy = new CustomField(Name, UnderlyingType, IsArray);
+            CustomField copy = new CustomField(Name, UnderlyingType, IsArray, ClassOrder);
 
             copy.EditorType = EditorType;
             copy.Value = Value;

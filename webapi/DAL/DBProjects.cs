@@ -114,6 +114,21 @@ namespace webapi.DAL
             }
         }
 
+        public static async Task UpdateClassOrderAsync(string projectGUID, string fieldName, int order)
+        {
+            using (SqlConnection conn = new SqlConnection(Settings.ConnectionString))
+            {
+                await conn.OpenAsync();
+                SqlCommand cmd = new SqlCommand("UpdateClassFieldOrder", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add(new SqlParameter("@guid", projectGUID));
+                cmd.Parameters.Add(new SqlParameter("@field", fieldName));
+                cmd.Parameters.Add(new SqlParameter("@order", order));
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
         public static async Task InsertTemplateMetaAsync(string ObjectGUID, string ProjectGUID)
         {
             using (SqlConnection conn = new SqlConnection(Settings.ConnectionString))
@@ -162,12 +177,16 @@ namespace webapi.DAL
                 {
                     string field = reader["FIELD"].ToString();
                     string value = reader["VALUE"].ToString();
+                    int classOrder = Int32.Parse(reader["CLASS_ORDER"].ToString());        //TODO: TRYPARSE
 
                     List<Modifier> modifiers = ModifierCaster.CastIntoModifiers(value);
 
                     var matches = completedObject.CustomFields.Where(x => x.Name == field);
                     if (matches.Count() > 0)
+                    {
                         matches.First().Modifiers = modifiers;
+                        matches.First().ClassOrder = classOrder;
+                    }
                 }
 
                 foreach(CustomField field in completedObject.CustomFields)
@@ -207,7 +226,7 @@ namespace webapi.DAL
                     string type = reader["TYPE"].ToString();
                     bool isArray = (bool)reader["ISARRAY"];
 
-                    CustomField newField = new CustomField(field, type, isArray)
+                    CustomField newField = new CustomField(field, type, isArray, 0)
                     {
                         Value = JsonConvert.DeserializeObject(value)
                     };

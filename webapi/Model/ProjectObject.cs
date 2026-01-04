@@ -104,6 +104,11 @@ namespace webapi.Model
             await Task.WhenAll(tasks);
         }
 
+        public async Task UpdateFieldClassOrder(string FieldName, int Order)
+        {
+            await (DBProjects.UpdateClassOrderAsync(Templates[0].GUID, FieldName, Order));
+        }
+
         public async Task DeleteObject(string guid)
         {
             CustomObjects.RemoveAll(x => x.GUID == guid);
