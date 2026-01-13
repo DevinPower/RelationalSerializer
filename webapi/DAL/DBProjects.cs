@@ -177,7 +177,13 @@ namespace webapi.DAL
                 {
                     string field = reader["FIELD"].ToString();
                     string value = reader["VALUE"].ToString();
-                    int classOrder = Int32.Parse(reader["CLASS_ORDER"].ToString());        //TODO: TRYPARSE
+
+
+                    int classOrder = 0;
+                    if (Int32.TryParse(reader["CLASS_ORDER"].ToString(), out int parseResult))
+                    {
+                        classOrder = parseResult;
+                    }
 
                     List<Modifier> modifiers = ModifierCaster.CastIntoModifiers(value);
 
